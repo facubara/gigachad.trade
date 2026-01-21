@@ -11,6 +11,9 @@ import { ProjectionDisplay } from "./ProjectionDisplay";
 
 const TRANSACTIONS_PER_PAGE = 20;
 
+type SortColumn = "solAmount" | "gigaAmount" | "date";
+type SortDirection = "asc" | "desc";
+
 export function CalculatorDashboard() {
   const { analysis, balance, isLoading, loadingState, error, analyze, clear, isCacheAvailable } =
     useWalletAnalysis();
@@ -24,6 +27,8 @@ export function CalculatorDashboard() {
   } = useCalculator();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortColumn, setSortColumn] = useState<SortColumn>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Console log analysis data when it changes
   useEffect(() => {
@@ -40,10 +45,46 @@ export function CalculatorDashboard() {
     }
   }, [analysis]);
 
-  // Reset page when analysis changes
+  // Reset page and sort when analysis changes
   useEffect(() => {
     setCurrentPage(1);
+    setSortColumn("date");
+    setSortDirection("desc");
   }, [analysis?.address]);
+
+  // Sort transactions
+  const sortedTransactions = useMemo(() => {
+    if (!analysis) return [];
+    const txs = [...analysis.transactions];
+
+    txs.sort((a, b) => {
+      let comparison = 0;
+      switch (sortColumn) {
+        case "solAmount":
+          comparison = a.quoteAmount - b.quoteAmount;
+          break;
+        case "gigaAmount":
+          comparison = a.gigachadAmount - b.gigachadAmount;
+          break;
+        case "date":
+          comparison = a.timestamp - b.timestamp;
+          break;
+      }
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+
+    return txs;
+  }, [analysis, sortColumn, sortDirection]);
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortColumn(column);
+      setSortDirection("desc");
+    }
+    setCurrentPage(1);
+  };
 
   // Compute current value and projections
   const currentValue = useMemo(() => {
@@ -150,19 +191,34 @@ export function CalculatorDashboard() {
                   <th className="text-left py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs">
                     Action
                   </th>
-                  <th className="text-right py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs">
-                    SOL Amount
-                  </th>
-                  <th className="text-right py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs">
-                    GIGA Amount
-                  </th>
-                  <th className="text-right py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs">
-                    Date
-                  </th>
+                  <SortableHeader
+                    label="SOL Amount"
+                    column="solAmount"
+                    currentColumn={sortColumn}
+                    direction={sortDirection}
+                    onSort={handleSort}
+                    align="right"
+                  />
+                  <SortableHeader
+                    label="GIGA Amount"
+                    column="gigaAmount"
+                    currentColumn={sortColumn}
+                    direction={sortDirection}
+                    onSort={handleSort}
+                    align="right"
+                  />
+                  <SortableHeader
+                    label="Date"
+                    column="date"
+                    currentColumn={sortColumn}
+                    direction={sortDirection}
+                    onSort={handleSort}
+                    align="right"
+                  />
                 </tr>
               </thead>
               <tbody>
-                {analysis.transactions
+                {sortedTransactions
                   .slice(
                     (currentPage - 1) * TRANSACTIONS_PER_PAGE,
                     currentPage * TRANSACTIONS_PER_PAGE
@@ -239,6 +295,78 @@ export function CalculatorDashboard() {
         </section>
       )}
     </div>
+  );
+}
+
+function SortableHeader({
+  label,
+  column,
+  currentColumn,
+  direction,
+  onSort,
+  align = "left",
+}: {
+  label: string;
+  column: SortColumn;
+  currentColumn: SortColumn;
+  direction: SortDirection;
+  onSort: (column: SortColumn) => void;
+  align?: "left" | "right";
+}) {
+  const isActive = currentColumn === column;
+
+  return (
+    <th
+      className={`py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs cursor-pointer hover:text-[var(--text)] transition-colors select-none ${
+        align === "right" ? "text-right" : "text-left"
+      }`}
+      onClick={() => onSort(column)}
+    >
+      <span className="inline-flex items-center gap-1">
+        {align === "right" && (
+          <SortIndicator isActive={isActive} direction={direction} />
+        )}
+        {label}
+        {align === "left" && (
+          <SortIndicator isActive={isActive} direction={direction} />
+        )}
+      </span>
+    </th>
+  );
+}
+
+function SortIndicator({
+  isActive,
+  direction,
+}: {
+  isActive: boolean;
+  direction: SortDirection;
+}) {
+  return (
+    <span className="inline-flex flex-col">
+      <svg
+        className={`w-3 h-3 transition-colors ${
+          isActive && direction === "asc"
+            ? "text-[var(--accent)]"
+            : "text-[var(--muted)]"
+        }`}
+        viewBox="0 0 10 6"
+        fill="currentColor"
+      >
+        <path d="M5 0L10 6H0L5 0Z" />
+      </svg>
+      <svg
+        className={`w-3 h-3 -mt-1 transition-colors ${
+          isActive && direction === "desc"
+            ? "text-[var(--accent)]"
+            : "text-[var(--muted)]"
+        }`}
+        viewBox="0 0 10 6"
+        fill="currentColor"
+      >
+        <path d="M5 6L0 0H10L5 6Z" />
+      </svg>
+    </span>
   );
 }
 

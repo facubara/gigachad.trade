@@ -1,0 +1,23 @@
+GIGACHAD.TRADE
+
+A community website for the GIGACHAD token on Solana, tracking its journey to a $1 billion market cap.
+
+Purpose:
+To provide GIGACHAD holders with tools to track the token's progress, analyze their investments, and engage with the community through interactive features. The site aims to build hype and transparency around the token's growth toward its $1B market cap goal.
+
+Target Audience:
+- Current GIGACHAD token holders wanting to track their portfolio performance
+- Crypto enthusiasts interested in Solana meme coins
+- Community members looking to engage with gamified features
+- Potential investors researching the token's metrics and progress
+
+Features:
+- Real-time token metrics: current price, market cap, and progress toward the $1B goal
+- Push Up Game: an interactive clicker game for the community
+- Portfolio Calculator: analyze any wallet's GIGACHAD holdings, entry price, and profit/loss
+- Donation support via Phantom wallet
+
+Built with Next.js, React, and Tailwind CSS.
+
+Token: GIGACHAD (Solana)
+Mint: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9

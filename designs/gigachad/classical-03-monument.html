@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD — INEVITABLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --bone: #F5F5F5;
+            --marble: #DADADA;
+            --steel: #1A1A1A;
+            --gold: #C9A24D;
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* Grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 100px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 40px 100px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            color: var(--marble);
+            text-decoration: none;
+        }
+
+        /* Hero - Full screen monument */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 160px 40px;
+        }
+
+        .hero-roman {
+            font-family: var(--font-display);
+            font-size: 12px;
+            letter-spacing: 0.8em;
+            color: var(--gold);
+            margin-bottom: 80px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(100px, 20vw, 240px);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 0.8;
+            letter-spacing: -0.03em;
+            margin-bottom: 80px;
+        }
+
+        .hero-line {
+            width: 1px;
+            height: 100px;
+            background: var(--steel);
+            margin-bottom: 60px;
+        }
+
+        .hero-amount {
+            font-family: var(--font-display);
+            font-size: 14px;
+            letter-spacing: 0.5em;
+            color: var(--marble);
+        }
+
+        .hero-amount span {
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        /* Central Monument Section */
+        .monument {
+            padding: 200px 0;
+            text-align: center;
+            border-top: 1px solid var(--steel);
+            border-bottom: 1px solid var(--steel);
+        }
+
+        .monument-number {
+            font-family: var(--font-display);
+            font-size: clamp(120px, 25vw, 300px);
+            font-weight: 700;
+            line-height: 0.85;
+            letter-spacing: -0.02em;
+        }
+
+        .monument-number .dollar {
+            font-weight: 400;
+            color: var(--marble);
+        }
+
+        .monument-number .suffix {
+            font-size: 0.4em;
+            font-weight: 400;
+            color: var(--gold);
+            vertical-align: super;
+        }
+
+        .monument-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--marble);
+            margin-top: 40px;
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .stat-block {
+            padding: 100px 60px;
+            text-align: center;
+            border-right: 1px solid var(--steel);
+            border-bottom: 1px solid var(--steel);
+        }
+
+        .stat-block:nth-child(3) {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 72px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        .stat-text {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--marble);
+        }
+
+        /* Progress Timeline */
+        .timeline {
+            padding: 160px 0;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .timeline-title {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--marble);
+        }
+
+        .timeline-bar {
+            position: relative;
+            height: 1px;
+            background: var(--steel);
+            margin-bottom: 60px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 1px;
+            width: 12.7%;
+            background: var(--gold);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translate(50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+        }
+
+        .timeline-markers {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .marker {
+            text-align: center;
+            width: 120px;
+        }
+
+        .marker-value {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--steel);
+            margin-bottom: 8px;
+        }
+
+        .marker.complete .marker-value {
+            color: var(--white);
+        }
+
+        .marker-label {
+            font-family: var(--font-body);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        .marker.complete .marker-label {
+            color: var(--gold);
+        }
+
+        /* Final Statement */
+        .statement {
+            padding: 240px 0;
+            text-align: center;
+            border-top: 1px solid var(--steel);
+        }
+
+        .statement-text {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 10vw, 120px);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1;
+            margin-bottom: 100px;
+        }
+
+        .btn {
+            font-family: var(--font-body);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--black);
+            background: var(--white);
+            padding: 24px 80px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 50px 100px;
+            border-top: 1px solid var(--steel);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-family: var(--font-body);
+            font-size: 10px;
+            color: var(--steel);
+            letter-spacing: 0.1em;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 50px;
+        }
+
+        .footer-right a {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--marble);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container, .header, .footer {
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-block {
+                border-right: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container, .header, .footer {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .timeline-markers {
+                flex-wrap: wrap;
+                gap: 40px;
+                justify-content: center;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">Gigachad</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-roman">MMXXIV</div>
+            <h1 class="hero-title">Inevitable</h1>
+            <div class="hero-line"></div>
+            <div class="hero-amount">Current Position <span>$127M</span></div>
+        </section>
+
+        <section class="monument">
+            <div class="container">
+                <div class="monument-number">
+                    <span class="dollar">$</span>1<span class="suffix">B</span>
+                </div>
+                <div class="monument-label">Destination</div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-block">
+                        <div class="stat-number">$0.084</div>
+                        <div class="stat-text">Current Price</div>
+                    </div>
+                    <div class="stat-block">
+                        <div class="stat-number">9.6B</div>
+                        <div class="stat-text">Fixed Supply</div>
+                    </div>
+                    <div class="stat-block">
+                        <div class="stat-number">47,892</div>
+                        <div class="stat-text">Holders</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="timeline">
+            <div class="container">
+                <div class="timeline-header">
+                    <h2 class="timeline-title">Progress — 12.7%</h2>
+                </div>
+                <div class="timeline-bar">
+                    <div class="timeline-progress">
+                        <div class="timeline-dot"></div>
+                    </div>
+                </div>
+                <div class="timeline-markers">
+                    <div class="marker complete">
+                        <div class="marker-value">$10M</div>
+                        <div class="marker-label">Passed</div>
+                    </div>
+                    <div class="marker complete">
+                        <div class="marker-value">$50M</div>
+                        <div class="marker-label">Passed</div>
+                    </div>
+                    <div class="marker complete">
+                        <div class="marker-value">$100M</div>
+                        <div class="marker-label">Passed</div>
+                    </div>
+                    <div class="marker">
+                        <div class="marker-value">$500M</div>
+                        <div class="marker-label">Ahead</div>
+                    </div>
+                    <div class="marker">
+                        <div class="marker-value">$1B</div>
+                        <div class="marker-label">Target</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="statement">
+            <div class="container">
+                <h2 class="statement-text">The Standard</h2>
+                <a href="#" class="btn">Enter</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">
+            63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9
+        </div>
+        <div class="footer-right">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+        </div>
+    </footer>
+</body>
+</html>

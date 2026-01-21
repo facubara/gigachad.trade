@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD — The Path to $1B</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,900&display=swap');
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0b0b0f;
+            --bg-secondary: #111116;
+            --text-primary: #ffffff;
+            --text-muted: #6b6b6b;
+            --text-body: #9b9b9b;
+            --accent: #7CFF00;
+            --border: #2a2a2a;
+            --font-display: 'Cabinet Grotesk', sans-serif;
+            --font-body: 'Source Serif 4', serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.6s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .nav a {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-primary);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title .line {
+            display: block;
+            opacity: 0;
+            transform: translateY(60px);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hero-title .line:nth-child(1) { animation-delay: 0s; }
+        .hero-title .line:nth-child(2) { animation-delay: 0.1s; }
+
+        .hero-title .accent {
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.25rem;
+            color: var(--text-body);
+            max-width: 480px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            animation-delay: 0.4s;
+        }
+
+        .hero-metrics {
+            position: absolute;
+            right: 2rem;
+            bottom: 4rem;
+            text-align: right;
+            opacity: 0;
+            transform: translateX(20px);
+            animation: fadeInLeft 0.6s ease forwards;
+            animation-delay: 0.6s;
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--accent);
+        }
+
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Stats Grid */
+        .stats {
+            padding: 6rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .stat-item {
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: background 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .stat-item.visible {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number .unit {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            padding: 6rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+
+        .section-index {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-container {
+            background: var(--bg-secondary);
+            height: 4px;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .progress-bar.animate {
+            width: var(--progress);
+        }
+
+        .milestones {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .milestone {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .milestone.visible {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .milestone-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-label {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .milestone.active .milestone-value {
+            color: var(--accent);
+        }
+
+        /* Features */
+        .features {
+            padding: 6rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            padding: 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card.visible {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .feature-index {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover .feature-title {
+            color: var(--accent);
+        }
+
+        .feature-desc {
+            font-family: var(--font-body);
+            color: var(--text-body);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .feature-arrow {
+            position: absolute;
+            bottom: 3rem;
+            right: 3rem;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-arrow {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .feature-arrow svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-muted);
+            transition: stroke 0.3s ease, transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-arrow svg {
+            stroke: var(--bg-primary);
+            transform: translate(2px, -2px);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .cta-title.visible {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .cta-buttons.visible {
+            animation: fadeInUp 0.6s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 1.25rem 2.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 255, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-right a {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-metrics {
+                position: relative;
+                right: auto;
+                bottom: auto;
+                text-align: left;
+                margin-top: 4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .milestones {
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .milestone {
+                flex: 1 1 40%;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 2rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">GIGACHAD</a>
+        <nav class="nav">
+            <a href="#stats">Metrics</a>
+            <a href="#progress">Progress</a>
+            <a href="#features">Tools</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <p class="hero-label">Solana Token / Est. 2024</p>
+                <h1 class="hero-title">
+                    <span class="line">THE PATH</span>
+                    <span class="line">TO <span class="accent">$1B</span></span>
+                </h1>
+                <p class="hero-subtitle">
+                    Track the GIGACHAD movement. Real-time metrics, portfolio analysis, and community tools for the ascent to one billion.
+                </p>
+            </div>
+            <div class="hero-metrics">
+                <div class="metric-value" id="heroPrice">$0.0847</div>
+                <div class="metric-label">Current Price</div>
+            </div>
+        </section>
+
+        <section class="stats" id="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item" data-delay="0">
+                        <div class="stat-number">$<span id="marketCap">127</span><span class="unit">M</span></div>
+                        <div class="stat-label">Market Cap</div>
+                    </div>
+                    <div class="stat-item" data-delay="100">
+                        <div class="stat-number"><span id="progress">12.7</span><span class="unit">%</span></div>
+                        <div class="stat-label">To $1B Goal</div>
+                    </div>
+                    <div class="stat-item" data-delay="200">
+                        <div class="stat-number"><span id="supply">9.6</span><span class="unit">B</span></div>
+                        <div class="stat-label">Total Supply</div>
+                    </div>
+                    <div class="stat-item" data-delay="300">
+                        <div class="stat-number"><span id="holders">47</span><span class="unit">K</span></div>
+                        <div class="stat-label">Holders</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-section" id="progress">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Road to Ascension</h2>
+                    <span class="section-index">02</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="--progress: 12.7%"></div>
+                </div>
+                <div class="milestones">
+                    <div class="milestone active" data-delay="0">
+                        <div class="milestone-value">$10M</div>
+                        <div class="milestone-label">Warming Up</div>
+                    </div>
+                    <div class="milestone active" data-delay="100">
+                        <div class="milestone-value">$50M</div>
+                        <div class="milestone-label">Alpha Phase</div>
+                    </div>
+                    <div class="milestone active" data-delay="200">
+                        <div class="milestone-value">$100M</div>
+                        <div class="milestone-label">Sigma Territory</div>
+                    </div>
+                    <div class="milestone" data-delay="300">
+                        <div class="milestone-value">$500M</div>
+                        <div class="milestone-label">Final Form</div>
+                    </div>
+                    <div class="milestone" data-delay="400">
+                        <div class="milestone-value">$1B</div>
+                        <div class="milestone-label">Ascended</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Tools</h2>
+                    <span class="section-index">03</span>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card" data-delay="0">
+                        <div class="feature-index">01</div>
+                        <h3 class="feature-title">Portfolio Calculator</h3>
+                        <p class="feature-desc">Enter any wallet address to analyze GIGACHAD holdings, calculate average entry price, and track profit/loss in real-time.</p>
+                        <div class="feature-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-card" data-delay="100">
+                        <div class="feature-index">02</div>
+                        <h3 class="feature-title">Push Up Game</h3>
+                        <p class="feature-desc">The community clicker. Every rep counts toward collective greatness. Compete on the leaderboard and prove your dedication.</p>
+                        <div class="feature-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-card" data-delay="200">
+                        <div class="feature-index">03</div>
+                        <h3 class="feature-title">Live Metrics</h3>
+                        <p class="feature-desc">Real-time price feeds from DexScreener. Market cap tracking. Progress visualization toward the billion-dollar milestone.</p>
+                        <div class="feature-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-card" data-delay="300">
+                        <div class="feature-index">04</div>
+                        <h3 class="feature-title">Support the Movement</h3>
+                        <p class="feature-desc">Connect your Phantom wallet and contribute to the ecosystem. Direct SOL donations fuel development and community initiatives.</p>
+                        <div class="feature-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">Join the Ascent</h2>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">Launch App</a>
+                    <a href="#" class="btn btn-secondary">View on DexScreener</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">
+            © 2024 GIGACHAD — Solana Token<br>
+            CA: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9
+        </div>
+        <div class="footer-right">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+            <a href="#">DexScreener</a>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+
+                    // Animate progress bar
+                    if (entry.target.classList.contains('progress-bar')) {
+                        entry.target.classList.add('animate');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements
+        document.querySelectorAll('.stat-item, .milestone, .feature-card, .cta-title, .cta-buttons').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Progress bar observer
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            observer.observe(progressBar);
+        }
+
+        // Smooth number counting animation
+        function animateValue(element, start, end, duration, suffix = '') {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = progress * (end - start) + start;
+                element.textContent = value.toFixed(value < 10 ? 1 : 0) + suffix;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Magnetic button effect
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Feature card hover effect
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', `${x}%`);
+                card.style.setProperty('--mouse-y', `${y}%`);
+            });
+        });
+
+        // Simulate live price updates
+        function updatePrice() {
+            const basePrice = 0.0847;
+            const variation = (Math.random() - 0.5) * 0.002;
+            const newPrice = (basePrice + variation).toFixed(4);
+            document.getElementById('heroPrice').textContent = '$' + newPrice;
+        }
+
+        setInterval(updatePrice, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD — BUILT DIFFERENT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --bone: #F5F5F5;
+            --steel: #1A1A1A;
+            --marble: #DADADA;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--bone);
+            color: var(--black);
+            font-family: var(--font-body);
+        }
+
+        ::selection {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* Grid Lines Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10000;
+            background:
+                linear-gradient(90deg, transparent calc(25% - 1px), var(--marble) calc(25%), transparent calc(25% + 1px)),
+                linear-gradient(90deg, transparent calc(50% - 1px), var(--marble) calc(50%), transparent calc(50% + 1px)),
+                linear-gradient(90deg, transparent calc(75% - 1px), var(--marble) calc(75%), transparent calc(75% + 1px));
+            opacity: 0.3;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bone);
+            border-bottom: 2px solid var(--black);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 24px;
+            letter-spacing: 0.15em;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        .header-meta {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding-top: 90px;
+        }
+
+        .hero-left {
+            background: var(--black);
+            color: var(--white);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hero-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--marble);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(80px, 15vw, 180px);
+            line-height: 0.9;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-number {
+            font-family: var(--font-display);
+            font-size: 120px;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            color: var(--marble);
+        }
+
+        .hero-right {
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .hero-data {
+            border-top: 2px solid var(--black);
+            padding-top: 40px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--marble);
+        }
+
+        .data-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        .data-value {
+            font-family: var(--font-display);
+            font-size: 36px;
+            letter-spacing: 0.02em;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            border-top: 2px solid var(--black);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-cell {
+            padding: 80px 40px;
+            border-right: 2px solid var(--black);
+            text-align: center;
+        }
+
+        .stat-cell:last-child {
+            border-right: none;
+        }
+
+        .stat-figure {
+            font-family: var(--font-display);
+            font-size: 64px;
+            margin-bottom: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        .stat-name {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--black);
+            color: var(--white);
+            padding: 100px 60px;
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .progress-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--marble);
+        }
+
+        .progress-percent {
+            font-family: var(--font-display);
+            font-size: 96px;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--steel);
+            margin-bottom: 60px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--white);
+            width: 12.7%;
+        }
+
+        .milestones-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+        }
+
+        .milestone-cell {
+            background: var(--steel);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .milestone-cell.active {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .milestone-value {
+            font-family: var(--font-display);
+            font-size: 28px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .milestone-status {
+            font-family: var(--font-body);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .milestone-cell.active .milestone-status {
+            color: var(--steel);
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 160px 60px;
+            text-align: center;
+            border-top: 2px solid var(--black);
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(64px, 12vw, 180px);
+            line-height: 0.9;
+            letter-spacing: 0.02em;
+            margin-bottom: 80px;
+        }
+
+        .btn {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 20px;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            background: var(--black);
+            color: var(--white);
+            padding: 24px 100px;
+            border: 2px solid var(--black);
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 60px;
+            border-top: 2px solid var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-address {
+            font-family: var(--font-body);
+            font-size: 9px;
+            letter-spacing: 0.05em;
+            color: var(--steel);
+        }
+
+        .footer-links a {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--steel);
+            text-decoration: none;
+            margin-left: 40px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--black);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-cell {
+                border-bottom: 2px solid var(--black);
+            }
+
+            .stat-cell:nth-child(2) {
+                border-right: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-overlay {
+                display: none;
+            }
+
+            .header {
+                padding: 20px 30px;
+            }
+
+            .hero-left, .hero-right {
+                padding: 60px 30px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-cell {
+                border-right: none;
+            }
+
+            .milestones-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-links a {
+                margin: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+
+    <header class="header">
+        <a href="#" class="logo">GIGACHAD</a>
+        <div class="header-meta">Solana Network</div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-left">
+                <div class="hero-label">Target Market Cap</div>
+                <h1 class="hero-title">ONE<br>BILLION</h1>
+                <div class="hero-number">$1B</div>
+            </div>
+            <div class="hero-right">
+                <div class="hero-data">
+                    <div class="data-row">
+                        <span class="data-label">Current Cap</span>
+                        <span class="data-value">$127M</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Current Price</span>
+                        <span class="data-value">$0.084</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Progress</span>
+                        <span class="data-value">12.7%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-row">
+                <div class="stat-cell">
+                    <div class="stat-figure">$127M</div>
+                    <div class="stat-name">Market Cap</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-figure">9.6B</div>
+                    <div class="stat-name">Supply</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-figure">47,892</div>
+                    <div class="stat-name">Holders</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-figure">$0.084</div>
+                    <div class="stat-name">Price</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-section">
+            <div class="progress-top">
+                <div class="progress-label">Progress to $1B</div>
+                <div class="progress-percent">12.7%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="milestones-row">
+                <div class="milestone-cell active">
+                    <div class="milestone-value">$10M</div>
+                    <div class="milestone-status">Complete</div>
+                </div>
+                <div class="milestone-cell active">
+                    <div class="milestone-value">$50M</div>
+                    <div class="milestone-status">Complete</div>
+                </div>
+                <div class="milestone-cell active">
+                    <div class="milestone-value">$100M</div>
+                    <div class="milestone-status">Complete</div>
+                </div>
+                <div class="milestone-cell">
+                    <div class="milestone-value">$500M</div>
+                    <div class="milestone-status">Pending</div>
+                </div>
+                <div class="milestone-cell">
+                    <div class="milestone-value">$1B</div>
+                    <div class="milestone-status">Target</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 class="cta-title">BUILT DIFFERENT</h2>
+            <a href="#" class="btn">ENTER</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-address">CA: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9</div>
+        <div class="footer-links">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+            <a href="#">DexScreener</a>
+        </div>
+    </footer>
+</body>
+</html>

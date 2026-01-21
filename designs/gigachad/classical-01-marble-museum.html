@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD — THE STANDARD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #F5F5F5;
+            --pure-white: #FFFFFF;
+            --marble: #DADADA;
+            --steel: #1A1A1A;
+            --gold: #C9A24D;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Marble texture overlay */
+        .marble-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 80px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 40px 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 60px;
+        }
+
+        .nav a {
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--marble);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--white);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 200px 80px 120px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(80px, 15vw, 180px);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.02em;
+            color: var(--white);
+            margin-bottom: 60px;
+        }
+
+        .hero-title span {
+            display: block;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--marble);
+            margin-bottom: 80px;
+        }
+
+        .hero-number {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .hero-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--marble);
+            margin-top: 12px;
+        }
+
+        /* Divider */
+        .divider {
+            width: 1px;
+            height: 120px;
+            background: var(--steel);
+            margin: 0 auto;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 160px 0;
+        }
+
+        .stats-header {
+            text-align: center;
+            margin-bottom: 120px;
+        }
+
+        .stats-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--marble);
+            margin-bottom: 24px;
+        }
+
+        .stats-title {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--steel);
+            border-bottom: 1px solid var(--steel);
+        }
+
+        .stat-item {
+            padding: 80px 60px;
+            text-align: center;
+            border-right: 1px solid var(--steel);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--marble);
+        }
+
+        /* Progress */
+        .progress-section {
+            padding: 160px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+        }
+
+        .progress-title {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--white);
+        }
+
+        .progress-value {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .progress-bar {
+            height: 2px;
+            background: var(--steel);
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 12.7%;
+        }
+
+        .milestones {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .milestone {
+            text-align: center;
+        }
+
+        .milestone-value {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--marble);
+            margin-bottom: 8px;
+        }
+
+        .milestone.achieved .milestone-value {
+            color: var(--white);
+        }
+
+        .milestone-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        .milestone.achieved .milestone-label {
+            color: var(--marble);
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 200px 0;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(64px, 12vw, 140px);
+            font-weight: 900;
+            line-height: 0.9;
+            color: var(--white);
+            margin-bottom: 80px;
+        }
+
+        .btn {
+            display: inline-block;
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 24px 60px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .btn-primary:hover {
+            background: var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 80px;
+            border-top: 1px solid var(--steel);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: var(--marble);
+        }
+
+        .footer-address {
+            font-family: var(--font-body);
+            font-size: 10px;
+            color: var(--steel);
+            margin-top: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 40px;
+        }
+
+        .footer-right a {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--marble);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container, .header, .footer {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+
+            .hero {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid var(--steel);
+            }
+
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .milestones {
+                flex-wrap: wrap;
+                gap: 40px;
+            }
+
+            .milestone {
+                flex: 1 1 45%;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 40px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="marble-texture"></div>
+
+    <header class="header">
+        <a href="#" class="logo">Gigachad</a>
+        <nav class="nav">
+            <a href="#stats">Metrics</a>
+            <a href="#progress">Progress</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 class="hero-title">
+                <span>THE</span>
+                <span>STANDARD</span>
+            </h1>
+            <p class="hero-subtitle">Path to One Billion</p>
+            <div class="hero-number">$127M</div>
+            <div class="hero-label">Current Market Cap</div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="stats" id="stats">
+            <div class="container">
+                <div class="stats-header">
+                    <p class="stats-label">Current Position</p>
+                    <h2 class="stats-title">The Numbers</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">$0.084</div>
+                        <div class="stat-label">Price</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">9.6B</div>
+                        <div class="stat-label">Supply</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">47K</div>
+                        <div class="stat-label">Holders</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-section" id="progress">
+            <div class="container">
+                <div class="progress-header">
+                    <div class="progress-title">To Ascension</div>
+                    <div class="progress-value">12.7%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="milestones">
+                    <div class="milestone achieved">
+                        <div class="milestone-value">$10M</div>
+                        <div class="milestone-label">Complete</div>
+                    </div>
+                    <div class="milestone achieved">
+                        <div class="milestone-value">$50M</div>
+                        <div class="milestone-label">Complete</div>
+                    </div>
+                    <div class="milestone achieved">
+                        <div class="milestone-value">$100M</div>
+                        <div class="milestone-label">Complete</div>
+                    </div>
+                    <div class="milestone">
+                        <div class="milestone-value">$500M</div>
+                        <div class="milestone-label">Pending</div>
+                    </div>
+                    <div class="milestone">
+                        <div class="milestone-value">$1B</div>
+                        <div class="milestone-label">Target</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">Built Different</h2>
+                <a href="#" class="btn btn-primary">Enter</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">
+            GIGACHAD © MMXXIV
+            <div class="footer-address">63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9</div>
+        </div>
+        <div class="footer-right">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+        </div>
+    </footer>
+</body>
+</html>

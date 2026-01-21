@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD — Market Data Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #161616;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-tertiary: #555555;
+            --accent: #ff3d00;
+            --accent-dim: rgba(255, 61, 0, 0.1);
+            --border: #2a2a2a;
+            --grid-size: 8px;
+            --font-display: 'Archivo Black', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 calc(var(--grid-size) * 4);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.3s forwards;
+        }
+
+        .header-inner {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            height: 64px;
+            padding: 0 calc(var(--grid-size) * 4);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav {
+            display: flex;
+            gap: calc(var(--grid-size) * 4);
+        }
+
+        .nav a {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: calc(var(--grid-size) * 2);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: calc(var(--grid-size) * 8);
+            padding: calc(var(--grid-size) * 16) calc(var(--grid-size) * 4);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-tag {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: calc(var(--grid-size) * 3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease 0.4s forwards;
+        }
+
+        .hero-number {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 12vw, 9rem);
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            margin-bottom: calc(var(--grid-size) * 4);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 0.6s ease 0.5s forwards;
+        }
+
+        .hero-number .dollar {
+            color: var(--text-tertiary);
+            font-size: 0.6em;
+        }
+
+        .hero-desc {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease 0.6s forwards;
+        }
+
+        .hero-data {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: calc(var(--grid-size) * 3);
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: calc(var(--grid-size) * 2);
+            align-items: baseline;
+            padding: calc(var(--grid-size) * 2) 0;
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .data-row.visible {
+            animation: fadeInLeft 0.4s ease forwards;
+        }
+
+        .data-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+        }
+
+        .data-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .data-value.accent {
+            color: var(--accent);
+        }
+
+        .data-value .unit {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-left: 4px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            padding: calc(var(--grid-size) * 12) calc(var(--grid-size) * 4);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: calc(var(--grid-size) * 8);
+        }
+
+        .section-meta {
+            position: sticky;
+            top: calc(var(--grid-size) * 12);
+            height: fit-content;
+        }
+
+        .section-number {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+            margin-bottom: calc(var(--grid-size) * 2);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: calc(var(--grid-size) * 2);
+        }
+
+        .section-desc {
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .progress-visual {
+            background: var(--bg-secondary);
+            padding: calc(var(--grid-size) * 4);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: calc(var(--grid-size) * 4);
+        }
+
+        .progress-current {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-target {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .progress-bar-container {
+            height: 2px;
+            background: var(--border);
+            margin-bottom: calc(var(--grid-size) * 6);
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .progress-bar.animate {
+            width: var(--progress);
+        }
+
+        .progress-marker {
+            position: absolute;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease 1.5s;
+        }
+
+        .progress-bar.animate + .progress-marker {
+            opacity: 1;
+        }
+
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .milestone {
+            background: var(--bg-secondary);
+            padding: calc(var(--grid-size) * 3);
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .milestone.visible {
+            animation: fadeInUp 0.3s ease forwards;
+        }
+
+        .milestone-value {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .milestone.achieved .milestone-value {
+            color: var(--accent);
+        }
+
+        .milestone-label {
+            font-family: var(--font-body);
+            font-size: 0.6875rem;
+            color: var(--text-tertiary);
+        }
+
+        .milestone-status {
+            font-family: var(--font-mono);
+            font-size: 0.5625rem;
+            text-transform: uppercase;
+            margin-top: calc(var(--grid-size) * 1);
+            color: var(--text-tertiary);
+        }
+
+        .milestone.achieved .milestone-status {
+            color: var(--accent);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: calc(var(--grid-size) * 12) calc(var(--grid-size) * 4);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            padding: calc(var(--grid-size) * 4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card.visible {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-secondary);
+        }
+
+        .feature-number {
+            font-family: var(--font-mono);
+            font-size: 0.5625rem;
+            color: var(--text-tertiary);
+            margin-bottom: calc(var(--grid-size) * 4);
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            margin-bottom: calc(var(--grid-size) * 2);
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover .feature-title {
+            color: var(--accent);
+        }
+
+        .feature-desc {
+            font-family: var(--font-body);
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: calc(var(--grid-size) * 16) calc(var(--grid-size) * 4);
+        }
+
+        .cta-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: calc(var(--grid-size) * 8);
+            align-items: center;
+        }
+
+        .cta-content {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .cta-content.visible {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: calc(var(--grid-size) * 2);
+        }
+
+        .cta-desc {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+        }
+
+        .cta-actions {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--grid-size) * 2);
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .cta-actions.visible {
+            animation: fadeInLeft 0.5s ease 0.2s forwards;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: calc(var(--grid-size) * 2) calc(var(--grid-size) * 4);
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--text-primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #ff5722;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            padding: calc(var(--grid-size) * 4);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: calc(var(--grid-size) * 4);
+        }
+
+        .footer-left {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+        }
+
+        .footer-center {
+            font-family: var(--font-mono);
+            font-size: 0.5625rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            word-break: break-all;
+            max-width: 400px;
+        }
+
+        .footer-right {
+            display: flex;
+            justify-content: flex-end;
+            gap: calc(var(--grid-size) * 3);
+        }
+
+        .footer-right a {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: color 0.2s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-meta {
+                position: relative;
+                top: 0;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .milestones-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: calc(var(--grid-size) * 2);
+                text-align: center;
+            }
+
+            .footer-right {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo">GIGACHAD</a>
+            <nav class="nav">
+                <a href="#progress">Progress</a>
+                <a href="#features">Tools</a>
+            </nav>
+            <div class="header-right">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    Live Data
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-tag">Target Market Cap</div>
+                <h1 class="hero-number"><span class="dollar">$</span>1B</h1>
+                <p class="hero-desc">Real-time tracking interface for the GIGACHAD token on Solana. Portfolio analysis, market metrics, and community tools.</p>
+            </div>
+            <div class="hero-data">
+                <div class="data-row" data-delay="0">
+                    <span class="data-label">Current Price</span>
+                    <span class="data-value" id="price">$0.0847</span>
+                </div>
+                <div class="data-row" data-delay="50">
+                    <span class="data-label">Market Cap</span>
+                    <span class="data-value accent" id="mcap">$127.4M</span>
+                </div>
+                <div class="data-row" data-delay="100">
+                    <span class="data-label">Progress</span>
+                    <span class="data-value">12.74<span class="unit">%</span></span>
+                </div>
+                <div class="data-row" data-delay="150">
+                    <span class="data-label">Total Supply</span>
+                    <span class="data-value">9.6<span class="unit">B</span></span>
+                </div>
+                <div class="data-row" data-delay="200">
+                    <span class="data-label">Holders</span>
+                    <span class="data-value">47,892</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-section" id="progress">
+            <div class="container">
+                <div class="section-grid">
+                    <div class="section-meta">
+                        <div class="section-number">01</div>
+                        <h2 class="section-title">Progress Tracking</h2>
+                        <p class="section-desc">Visual representation of the journey toward the $1 billion market cap target. Each milestone represents a significant achievement in the GIGACHAD ecosystem growth.</p>
+                    </div>
+                    <div class="progress-visual">
+                        <div class="progress-header">
+                            <span class="progress-current">$127.4M Current</span>
+                            <span class="progress-target">$1B Target</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="--progress: 12.74%;"></div>
+                            <div class="progress-marker" style="left: 12.74%;"></div>
+                        </div>
+                        <div class="milestones-grid">
+                            <div class="milestone achieved" data-delay="0">
+                                <div class="milestone-value">$10M</div>
+                                <div class="milestone-label">Warming Up</div>
+                                <div class="milestone-status">Achieved</div>
+                            </div>
+                            <div class="milestone achieved" data-delay="50">
+                                <div class="milestone-value">$50M</div>
+                                <div class="milestone-label">Alpha Phase</div>
+                                <div class="milestone-status">Achieved</div>
+                            </div>
+                            <div class="milestone achieved" data-delay="100">
+                                <div class="milestone-value">$100M</div>
+                                <div class="milestone-label">Sigma Territory</div>
+                                <div class="milestone-status">Achieved</div>
+                            </div>
+                            <div class="milestone" data-delay="150">
+                                <div class="milestone-value">$500M</div>
+                                <div class="milestone-label">Final Form</div>
+                                <div class="milestone-status">Pending</div>
+                            </div>
+                            <div class="milestone" data-delay="200">
+                                <div class="milestone-value">$1B</div>
+                                <div class="milestone-label">Ascended</div>
+                                <div class="milestone-status">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section" id="features">
+            <div class="container">
+                <div class="section-grid" style="margin-bottom: calc(var(--grid-size) * 6);">
+                    <div class="section-meta">
+                        <div class="section-number">02</div>
+                        <h2 class="section-title">Available Tools</h2>
+                        <p class="section-desc">A suite of utilities designed for GIGACHAD holders. Analyze positions, track metrics, and engage with the community.</p>
+                    </div>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card" data-delay="0">
+                        <div class="feature-number">01</div>
+                        <h3 class="feature-title">Portfolio Calculator</h3>
+                        <p class="feature-desc">Analyze any Solana wallet address. Calculate weighted average entry price, track holdings, and monitor real-time P&L.</p>
+                    </div>
+                    <div class="feature-card" data-delay="50">
+                        <div class="feature-number">02</div>
+                        <h3 class="feature-title">Push Up Game</h3>
+                        <p class="feature-desc">Community gamification. Log physical reps, compete on global leaderboards, build dedication through action.</p>
+                    </div>
+                    <div class="feature-card" data-delay="100">
+                        <div class="feature-number">03</div>
+                        <h3 class="feature-title">Live Metrics</h3>
+                        <p class="feature-desc">Real-time data feed from DexScreener API. Price, volume, market cap, holder count. Auto-refresh every 30 seconds.</p>
+                    </div>
+                    <div class="feature-card" data-delay="150">
+                        <div class="feature-number">04</div>
+                        <h3 class="feature-title">Donation System</h3>
+                        <p class="feature-desc">Support development via Phantom wallet. Direct SOL contributions fund ecosystem growth and community initiatives.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-grid">
+                    <div class="cta-content">
+                        <h2 class="cta-title">Access the Interface</h2>
+                        <p class="cta-desc">Connect your wallet and explore the full suite of GIGACHAD tools. Track your position, analyze the market, join the movement.</p>
+                    </div>
+                    <div class="cta-actions">
+                        <a href="#" class="btn btn-primary">Launch Application</a>
+                        <a href="#" class="btn btn-secondary">View on DexScreener</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-left">© 2024 GIGACHAD</div>
+                <div class="footer-center">CA: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9</div>
+                <div class="footer-right">
+                    <a href="#">Twitter</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, parseInt(delay));
+
+                    if (entry.target.classList.contains('progress-bar')) {
+                        entry.target.classList.add('animate');
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.data-row, .milestone, .feature-card, .cta-content, .cta-actions').forEach(el => {
+            observer.observe(el);
+        });
+
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) observer.observe(progressBar);
+
+        // Price updates
+        function updatePrice() {
+            const base = 0.0847;
+            const variation = (Math.random() - 0.5) * 0.002;
+            document.getElementById('price').textContent = '$' + (base + variation).toFixed(4);
+
+            const mcapBase = 127.4;
+            const mcapVar = (Math.random() - 0.5) * 1;
+            document.getElementById('mcap').textContent = '$' + (mcapBase + mcapVar).toFixed(1) + 'M';
+        }
+
+        setInterval(updatePrice, 5000);
+    </script>
+</body>
+</html>

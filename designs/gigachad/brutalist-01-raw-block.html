@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --bone: #F5F5F5;
+            --steel: #1A1A1A;
+            --marble: #DADADA;
+            --blood: #B11226;
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+        }
+
+        ::selection {
+            background: var(--blood);
+            color: var(--white);
+        }
+
+        /* Header - Minimal */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 18px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .nav a {
+            font-family: var(--font-body);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--white);
+            text-decoration: none;
+            margin-left: 40px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        /* Hero - Raw, Massive */
+        .hero {
+            min-height: 100vh;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            padding-bottom: 80px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(100px, 25vw, 320px);
+            text-transform: uppercase;
+            line-height: 0.85;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 60px;
+        }
+
+        .hero-stat {
+            text-align: left;
+        }
+
+        .hero-stat-value {
+            font-family: var(--font-display);
+            font-size: 48px;
+            text-transform: uppercase;
+        }
+
+        .hero-stat-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--marble);
+            margin-top: 8px;
+        }
+
+        /* White Block */
+        .white-block {
+            background: var(--white);
+            color: var(--black);
+            padding: 120px 40px;
+        }
+
+        .block-title {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 12vw, 160px);
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 80px;
+        }
+
+        .stats-brutal {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-brutal {
+            border-left: 4px solid var(--black);
+            padding: 40px 30px;
+        }
+
+        .stat-brutal-value {
+            font-family: var(--font-display);
+            font-size: 48px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .stat-brutal-label {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        /* Black Block - Progress */
+        .progress-block {
+            background: var(--black);
+            padding: 120px 40px;
+        }
+
+        .progress-brutal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .progress-brutal-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .progress-brutal-percent {
+            font-family: var(--font-display);
+            font-size: 72px;
+            text-transform: uppercase;
+        }
+
+        .progress-brutal-bar {
+            height: 8px;
+            background: var(--steel);
+        }
+
+        .progress-brutal-fill {
+            height: 100%;
+            background: var(--white);
+            width: 12.7%;
+        }
+
+        .milestones-brutal {
+            display: flex;
+            margin-top: 60px;
+            gap: 0;
+        }
+
+        .ms-brutal {
+            flex: 1;
+            padding: 30px;
+            border-right: 1px solid var(--steel);
+        }
+
+        .ms-brutal:last-child {
+            border-right: none;
+        }
+
+        .ms-brutal-value {
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--steel);
+            margin-bottom: 8px;
+        }
+
+        .ms-brutal.done .ms-brutal-value {
+            color: var(--white);
+        }
+
+        .ms-brutal-status {
+            font-family: var(--font-body);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--steel);
+        }
+
+        .ms-brutal.done .ms-brutal-status {
+            color: var(--blood);
+        }
+
+        /* Blood Accent Block */
+        .accent-block {
+            background: var(--blood);
+            padding: 160px 40px;
+            text-align: center;
+        }
+
+        .accent-title {
+            font-family: var(--font-display);
+            font-size: clamp(64px, 15vw, 200px);
+            text-transform: uppercase;
+            line-height: 0.85;
+            margin-bottom: 80px;
+        }
+
+        .btn-brutal {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 18px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: var(--white);
+            color: var(--black);
+            padding: 24px 80px;
+            transition: all 0.2s;
+        }
+
+        .btn-brutal:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--black);
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--steel);
+        }
+
+        .footer-left {
+            font-family: var(--font-body);
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            color: var(--steel);
+        }
+
+        .footer-right a {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--marble);
+            text-decoration: none;
+            margin-left: 40px;
+            transition: color 0.2s;
+        }
+
+        .footer-right a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-brutal {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-brutal {
+                border-bottom: 4px solid var(--black);
+            }
+
+            .milestones-brutal {
+                flex-wrap: wrap;
+            }
+
+            .ms-brutal {
+                flex: 1 1 50%;
+                border-bottom: 1px solid var(--steel);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .hero-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 40px;
+            }
+
+            .stats-brutal {
+                grid-template-columns: 1fr;
+            }
+
+            .ms-brutal {
+                flex: 1 1 100%;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-right a {
+                margin: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">Gigachad</a>
+        <nav class="nav">
+            <a href="#data">Data</a>
+            <a href="#progress">Progress</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 class="hero-title">$1B</h1>
+            <div class="hero-row">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">$127M</div>
+                    <div class="hero-stat-label">Current Cap</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">12.7%</div>
+                    <div class="hero-stat-label">Progress</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">Solana</div>
+                    <div class="hero-stat-label">Network</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="white-block" id="data">
+            <h2 class="block-title">The Numbers</h2>
+            <div class="stats-brutal">
+                <div class="stat-brutal">
+                    <div class="stat-brutal-value">$0.084</div>
+                    <div class="stat-brutal-label">Price</div>
+                </div>
+                <div class="stat-brutal">
+                    <div class="stat-brutal-value">9.6B</div>
+                    <div class="stat-brutal-label">Supply</div>
+                </div>
+                <div class="stat-brutal">
+                    <div class="stat-brutal-value">47,892</div>
+                    <div class="stat-brutal-label">Holders</div>
+                </div>
+                <div class="stat-brutal">
+                    <div class="stat-brutal-value">$1B</div>
+                    <div class="stat-brutal-label">Target</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-block" id="progress">
+            <div class="progress-brutal-header">
+                <div class="progress-brutal-title">To Target</div>
+                <div class="progress-brutal-percent">12.7%</div>
+            </div>
+            <div class="progress-brutal-bar">
+                <div class="progress-brutal-fill"></div>
+            </div>
+            <div class="milestones-brutal">
+                <div class="ms-brutal done">
+                    <div class="ms-brutal-value">$10M</div>
+                    <div class="ms-brutal-status">Done</div>
+                </div>
+                <div class="ms-brutal done">
+                    <div class="ms-brutal-value">$50M</div>
+                    <div class="ms-brutal-status">Done</div>
+                </div>
+                <div class="ms-brutal done">
+                    <div class="ms-brutal-value">$100M</div>
+                    <div class="ms-brutal-status">Done</div>
+                </div>
+                <div class="ms-brutal">
+                    <div class="ms-brutal-value">$500M</div>
+                    <div class="ms-brutal-status">Next</div>
+                </div>
+                <div class="ms-brutal">
+                    <div class="ms-brutal-value">$1B</div>
+                    <div class="ms-brutal-status">Final</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accent-block">
+            <h2 class="accent-title">No Excuses</h2>
+            <a href="#" class="btn-brutal">Enter</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">
+            CA: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9
+        </div>
+        <div class="footer-right">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+        </div>
+    </footer>
+</body>
+</html>

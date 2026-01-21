@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGACHAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --bone: #FAFAFA;
+            --steel: #111111;
+            --border: #222222;
+            --muted: #666666;
+            --dim: #444444;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        ::selection {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Header */
+        .header {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav a {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 50px;
+        }
+
+        /* Hero - Ultra minimal */
+        .hero {
+            margin-bottom: 120px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 30px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(72px, 18vw, 200px);
+            font-weight: 700;
+            line-height: 0.85;
+            letter-spacing: -0.03em;
+        }
+
+        /* Data Strip */
+        .data-strip {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-item {
+            flex: 1;
+            padding: 40px 30px;
+            border-right: 1px solid var(--border);
+        }
+
+        .data-item:last-child {
+            border-right: none;
+        }
+
+        .data-label {
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 12px;
+        }
+
+        .data-value {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Progress - Minimal */
+        .progress {
+            padding: 60px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        .progress-value {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .progress-track {
+            height: 1px;
+            background: var(--border);
+            position: relative;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 1px;
+            width: 12.7%;
+            background: var(--white);
+        }
+
+        /* Milestones - Horizontal text */
+        .milestones {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .ms {
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        .ms.done {
+            color: var(--muted);
+        }
+
+        .ms span {
+            opacity: 0.5;
+            margin-left: 6px;
+        }
+
+        .ms.done span {
+            opacity: 1;
+        }
+
+        /* CTA */
+        .cta {
+            margin-top: 100px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 16px 40px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .btn-primary:hover {
+            background: var(--muted);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--muted);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 30px 50px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 9px;
+            color: var(--dim);
+            letter-spacing: 0.05em;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-right a {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--dim);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-right a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .data-strip {
+                flex-wrap: wrap;
+            }
+
+            .data-item {
+                flex: 1 1 50%;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .data-item:nth-child(2) {
+                border-right: none;
+            }
+
+            .data-item:nth-child(3),
+            .data-item:nth-child(4) {
+                border-bottom: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header, .main, .footer {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .data-strip {
+                flex-direction: column;
+            }
+
+            .data-item {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .data-item:last-child {
+                border-bottom: none;
+            }
+
+            .milestones {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .cta {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">GIGACHAD</a>
+        <nav class="nav">
+            <a href="#">Data</a>
+            <a href="#">Tools</a>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <p class="hero-eyebrow">Target Market Cap</p>
+            <h1 class="hero-title">$1B</h1>
+        </section>
+
+        <div class="data-strip">
+            <div class="data-item">
+                <div class="data-label">Current Cap</div>
+                <div class="data-value">$127M</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Price</div>
+                <div class="data-value">$0.084</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Supply</div>
+                <div class="data-value">9.6B</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Holders</div>
+                <div class="data-value">47K</div>
+            </div>
+        </div>
+
+        <section class="progress">
+            <div class="progress-info">
+                <span class="progress-label">Progress</span>
+                <span class="progress-value">12.7%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="milestones">
+                <div class="ms done">$10M <span>✓</span></div>
+                <div class="ms done">$50M <span>✓</span></div>
+                <div class="ms done">$100M <span>✓</span></div>
+                <div class="ms">$500M</div>
+                <div class="ms">$1B</div>
+            </div>
+        </section>
+
+        <div class="cta">
+            <a href="#" class="btn btn-primary">Enter App</a>
+            <a href="#" class="btn btn-secondary">DexScreener</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">CA: 63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9</div>
+        <div class="footer-right">
+            <a href="#">Twitter</a>
+            <a href="#">Telegram</a>
+        </div>
+    </footer>
+</body>
+</html>
