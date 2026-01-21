@@ -1,0 +1,34 @@
+{
+  "hero": {
+    "title": "GIGACHAD",
+    "subtitle": "The Path to $1B"
+  },
+  "marketCap": {
+    "title": "Market Cap Progress",
+    "current": "Current",
+    "target": "Target"
+  },
+  "multiplier": {
+    "prefix": "x",
+    "suffix": "to $1B"
+  },
+  "price": {
+    "label": "Price"
+  },
+  "tipping": {
+    "title": "Support the Movement",
+    "button": "Tip {amount} SOL"
+  },
+  "clicker": {
+    "title": "Giga Clicker",
+    "pushups": "Push-ups",
+    "click": "PUSH"
+  },
+  "milestones": {
+    "warmingUp": "Warming Up",
+    "alphaPhase": "Alpha Phase",
+    "sigmaTerritory": "Sigma Territory",
+    "finalForm": "Final Form",
+    "ascended": "Ascended"
+  }
+}
