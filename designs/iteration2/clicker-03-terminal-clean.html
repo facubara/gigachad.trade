@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGA CLICKER | GIGACHAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --steel: #0A0A0A;
+            --border: #1A1A1A;
+            --muted: #666666;
+            --dim: #333333;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--steel);
+            color: var(--white);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        ::selection {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--white);
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .header-spacer {
+            width: 60px;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        /* Player Info */
+        .player-info {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .player-name {
+            font-size: 9px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        /* Counter */
+        .counter-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .counter-value {
+            font-size: clamp(60px, 16vw, 120px);
+            font-weight: 700;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .counter-label {
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 16px;
+        }
+
+        /* Click Button */
+        .click-container {
+            position: relative;
+            margin-bottom: 80px;
+        }
+
+        .click-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: var(--white);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--black);
+            transition: transform 0.1s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .click-button:hover {
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.1);
+        }
+
+        .click-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Click particles */
+        .click-particle {
+            position: absolute;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            pointer-events: none;
+            animation: float-up 0.6s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(1.1);
+            }
+        }
+
+        /* Perks Section */
+        .perks-section {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .perks-title {
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dim);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .perks-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .perk-card {
+            padding: 20px;
+            background: var(--steel);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .perk-card.active {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .perk-card.active:hover {
+            background: var(--border);
+        }
+
+        .perk-name {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .perk-status {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .loading-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Stats Footer */
+        .stats-bar {
+            padding: 20px 60px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .stat-item {
+            background: var(--steel);
+            padding: 16px 32px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 8px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 24px;
+            }
+
+            .page-title {
+                font-size: 14px;
+            }
+
+            .click-button {
+                width: 160px;
+                height: 160px;
+                font-size: 20px;
+            }
+
+            .perks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                padding: 0;
+            }
+
+            .stat-item {
+                padding: 12px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .click-button {
+                width: 140px;
+                height: 140px;
+                font-size: 18px;
+            }
+
+            .counter-value {
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="home-03-terminal-clean.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </a>
+        <h1 class="page-title">Giga Clicker</h1>
+        <div class="header-spacer"></div>
+    </header>
+
+    <main class="main">
+        <!-- Player Info -->
+        <div class="player-info">
+            <p class="player-name">GigaChad_2847</p>
+        </div>
+
+        <!-- Counter -->
+        <div class="counter-section">
+            <p class="counter-value">1,247</p>
+            <p class="counter-label">Push-ups</p>
+        </div>
+
+        <!-- Click Button -->
+        <div class="click-container">
+            <button class="click-button">PUSH</button>
+        </div>
+
+        <!-- Perks -->
+        <div class="perks-section">
+            <p class="perks-title">Perks</p>
+            <div class="perks-grid">
+                <div class="perk-card">
+                    <p class="perk-name">Protein Powder</p>
+                    <p class="perk-status">Coming soon</p>
+                </div>
+                <div class="perk-card">
+                    <p class="perk-name">Creatine</p>
+                    <p class="perk-status">Coming soon</p>
+                </div>
+                <div class="perk-card">
+                    <p class="perk-name">Gym Membership</p>
+                    <p class="perk-status">Coming soon</p>
+                </div>
+                <div class="perk-card">
+                    <p class="perk-name">Personal Trainer</p>
+                    <p class="perk-status">Coming soon</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Stats Bar -->
+    <footer class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-label">Session</span>
+            <span class="stat-value">247</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Best</span>
+            <span class="stat-value">1,892</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Rank</span>
+            <span class="stat-value">#42</span>
+        </div>
+    </footer>
+
+    <script>
+        // Simple click interaction demo
+        const button = document.querySelector('.click-button');
+        const counterValue = document.querySelector('.counter-value');
+        const container = document.querySelector('.click-container');
+        let count = 1247;
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        button.addEventListener('click', (e) => {
+            count++;
+            counterValue.textContent = formatNumber(count);
+
+            // Create particle
+            const particle = document.createElement('span');
+            particle.className = 'click-particle';
+            particle.textContent = '+1';
+
+            const rect = button.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const x = e.clientX - containerRect.left;
+            const y = e.clientY - containerRect.top;
+
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+
+            container.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 600);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Calculator | GIGACHAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --steel: #0A0A0A;
+            --border: #1A1A1A;
+            --muted: #666666;
+            --dim: #333333;
+            --positive: #4ADE80;
+            --negative: #F87171;
+            --purple: #A78BFA;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--steel);
+            color: var(--white);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--white);
+        }
+
+        .page-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+        }
+
+        .header-spacer {
+            width: 80px;
+        }
+
+        /* Main Container */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 30px 80px;
+        }
+
+        /* Sections */
+        .section {
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        .section-body {
+            padding: 24px;
+        }
+
+        /* Wallet Input */
+        .wallet-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--black);
+            border: 1px solid var(--border);
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .input-field::placeholder {
+            color: var(--dim);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--white);
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--muted);
+            color: var(--white);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider-text {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        /* Phantom Section */
+        .phantom-section {
+            text-align: center;
+        }
+
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--positive);
+            border-radius: 50%;
+        }
+
+        .wallet-address {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-phantom {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            background: var(--purple);
+            color: var(--black);
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-phantom:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--muted);
+            color: var(--white);
+        }
+
+        .current-view {
+            text-align: center;
+            font-size: 9px;
+            color: var(--dim);
+            margin-top: 20px;
+        }
+
+        .cache-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 9px;
+            color: var(--dim);
+        }
+
+        .cache-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--positive);
+            border-radius: 50%;
+        }
+
+        /* Holdings Display */
+        .holdings-empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--dim);
+            font-size: 11px;
+        }
+
+        .holdings-main {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .holdings-balance {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .holdings-token {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .holdings-value {
+            font-size: 16px;
+            color: var(--muted);
+        }
+
+        .holdings-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 11px;
+        }
+
+        .meta-item {
+            display: flex;
+            gap: 6px;
+        }
+
+        .meta-label {
+            color: var(--dim);
+        }
+
+        .positive {
+            color: var(--positive);
+        }
+
+        .negative {
+            color: var(--negative);
+        }
+
+        /* Target Input */
+        .target-modes {
+            display: flex;
+            gap: 1px;
+            background: var(--border);
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: var(--steel);
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .mode-btn:hover:not(.active) {
+            color: var(--white);
+        }
+
+        .target-input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .target-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--dim);
+        }
+
+        .target-input {
+            width: 100%;
+            padding: 14px 16px 14px 32px;
+            background: var(--black);
+            border: 1px solid var(--border);
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .target-input:focus {
+            outline: none;
+            border-color: var(--white);
+        }
+
+        .target-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 10px 16px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            background: var(--black);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn.active {
+            background: var(--white);
+            border-color: var(--white);
+            color: var(--black);
+        }
+
+        .preset-btn:hover:not(.active) {
+            border-color: var(--muted);
+            color: var(--white);
+        }
+
+        /* Projection Display */
+        .projection-empty {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .projection-empty-value {
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--dim);
+            opacity: 0.3;
+        }
+
+        .projection-empty-text {
+            color: var(--dim);
+            margin-top: 16px;
+            font-size: 11px;
+        }
+
+        .projection-main {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .projection-multiplier {
+            font-size: clamp(64px, 16vw, 100px);
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .projection-label {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+        .projection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+            margin-top: 30px;
+        }
+
+        .projection-card {
+            background: var(--steel);
+            padding: 24px;
+        }
+
+        .projection-card-label {
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+
+        .projection-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--positive);
+        }
+
+        .projection-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 24px;
+            font-size: 10px;
+        }
+
+        .projection-meta-item {
+            color: var(--dim);
+        }
+
+        .projection-meta-item span {
+            color: var(--white);
+        }
+
+        /* Transaction History */
+        .tx-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            margin-bottom: 24px;
+        }
+
+        .tx-summary-item {
+            background: var(--steel);
+            padding: 16px;
+        }
+
+        .tx-summary-label {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .tx-summary-value {
+            font-size: 12px;
+        }
+
+        .tx-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .tx-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-weight: 500;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--dim);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tx-table th.sortable {
+            cursor: pointer;
+        }
+
+        .tx-table th.sortable:hover {
+            color: var(--muted);
+        }
+
+        .tx-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tx-type-buy {
+            color: var(--positive);
+            font-weight: 500;
+        }
+
+        .tx-type-sell {
+            color: var(--negative);
+            font-weight: 500;
+        }
+
+        .tx-date {
+            color: var(--muted);
+        }
+
+        .tx-pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+        }
+
+        .tx-pagination-info {
+            color: var(--dim);
+        }
+
+        .tx-pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            padding: 8px 14px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            background: var(--black);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--muted);
+            color: var(--white);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination-page {
+            color: var(--muted);
+            padding: 0 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 24px;
+            }
+
+            .main {
+                padding: 24px 16px 60px;
+            }
+
+            .wallet-form {
+                flex-direction: column;
+            }
+
+            .holdings-balance {
+                font-size: 28px;
+            }
+
+            .holdings-meta {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .projection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tx-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .tx-table {
+                font-size: 10px;
+            }
+
+            .tx-pagination {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="home-03-terminal-clean.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </a>
+        <h1 class="page-title">Portfolio Calculator</h1>
+        <div class="header-spacer"></div>
+    </header>
+
+    <main class="main">
+        <!-- Wallet Input -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Wallet Address</h2>
+            </div>
+            <div class="section-body">
+                <form class="wallet-form">
+                    <input type="text" class="input-field" placeholder="Enter Solana wallet address...">
+                    <button type="submit" class="btn">Analyze</button>
+                </form>
+
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">or</span>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="phantom-section">
+                    <div class="wallet-status">
+                        <span class="status-dot"></span>
+                        <span class="wallet-address">Abc1...xyz9</span>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="btn">Analyze My Wallet</button>
+                        <button class="btn-outline">Disconnect</button>
+                    </div>
+                </div>
+
+                <div class="current-view">
+                    Currently viewing: <span>Abc12345...xyz98765</span>
+                </div>
+
+                <div class="cache-status">
+                    <span class="cache-dot"></span>
+                    <span>Local cache enabled</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Holdings Display -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Your Holdings</h2>
+            </div>
+            <div class="section-body">
+                <div class="holdings-main">
+                    <span class="holdings-balance">42.5M</span>
+                    <span class="holdings-token">GIGACHAD</span>
+                    <span class="holdings-value">$3,595</span>
+                </div>
+                <div class="holdings-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Avg. Buy Price:</span>
+                        <span>$0.00006842</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Buy Transactions:</span>
+                        <span>12</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Current:</span>
+                        <span>$0.0847</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Change:</span>
+                        <span class="positive">+1,137.8%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Target Input -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Set Target</h2>
+            </div>
+            <div class="section-body">
+                <div class="target-modes">
+                    <button class="mode-btn active">Market Cap</button>
+                    <button class="mode-btn">Token Price</button>
+                </div>
+
+                <div class="target-input-wrapper">
+                    <span class="target-prefix">$</span>
+                    <input type="text" class="target-input" placeholder="Enter market cap..." value="1000000000">
+                </div>
+
+                <div class="target-presets">
+                    <button class="preset-btn">$250M</button>
+                    <button class="preset-btn">$500M</button>
+                    <button class="preset-btn active">$1B</button>
+                    <button class="preset-btn">$5B</button>
+                    <button class="preset-btn">$10B</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projection Display -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Projection</h2>
+            </div>
+            <div class="section-body">
+                <div class="projection-main">
+                    <p class="projection-multiplier">x11.8</p>
+                    <p class="projection-label">From Your Entry</p>
+
+                    <div class="projection-grid">
+                        <div class="projection-card">
+                            <p class="projection-card-label">Value at Target</p>
+                            <p class="projection-card-value">$42,450</p>
+                        </div>
+                        <div class="projection-card">
+                            <p class="projection-card-label">Profit from Entry</p>
+                            <p class="projection-card-value">+$39,750</p>
+                        </div>
+                    </div>
+
+                    <div class="projection-meta">
+                        <span class="projection-meta-item">Target MC: <span>$1.00B</span></span>
+                        <span class="projection-meta-item">Target Price: <span>$0.1042</span></span>
+                        <span class="projection-meta-item">From Current: <span>x7.8</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction History -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Transaction History</h2>
+            </div>
+            <div class="section-body">
+                <div class="tx-summary">
+                    <div class="tx-summary-item">
+                        <span class="tx-summary-label">Total Bought</span>
+                        <span class="tx-summary-value">45.2M GIGA</span>
+                    </div>
+                    <div class="tx-summary-item">
+                        <span class="tx-summary-label">Total Sold</span>
+                        <span class="tx-summary-value">2.7M GIGA</span>
+                    </div>
+                    <div class="tx-summary-item">
+                        <span class="tx-summary-label">Total Transactions</span>
+                        <span class="tx-summary-value">15</span>
+                    </div>
+                </div>
+
+                <table class="tx-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th class="sortable">SOL Amount</th>
+                            <th class="sortable">GIGA Amount</th>
+                            <th class="sortable">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tx-type-buy">BUY</td>
+                            <td>2.5000</td>
+                            <td>15.2M</td>
+                            <td class="tx-date">1/15/2025</td>
+                        </tr>
+                        <tr>
+                            <td class="tx-type-buy">BUY</td>
+                            <td>1.2500</td>
+                            <td>8.1M</td>
+                            <td class="tx-date">1/10/2025</td>
+                        </tr>
+                        <tr>
+                            <td class="tx-type-sell">SELL</td>
+                            <td>0.5000</td>
+                            <td>2.7M</td>
+                            <td class="tx-date">1/8/2025</td>
+                        </tr>
+                        <tr>
+                            <td class="tx-type-buy">BUY</td>
+                            <td>3.0000</td>
+                            <td>21.9M</td>
+                            <td class="tx-date">1/5/2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tx-pagination">
+                    <span class="tx-pagination-info">Showing 1-4 of 15</span>
+                    <div class="tx-pagination-controls">
+                        <button class="pagination-btn" disabled>Previous</button>
+                        <span class="pagination-page">Page 1 of 4</span>
+                        <button class="pagination-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        Entry price is calculated from your on-chain transaction history. Results are estimates only.
+    </footer>
+</body>
+</html>
