@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "helius": {
+      "type": "url",
+      "url": "https://mcp.helius.dev/mcp"
+    }
+  }
+}
