@@ -17,11 +17,11 @@ export function ProjectionDisplay({
 }: ProjectionDisplayProps) {
   if (!hasWalletData) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-6xl md:text-7xl font-black text-[var(--muted)] opacity-30">
+      <div className="py-16 text-center">
+        <p className="text-[60px] md:text-[80px] font-bold text-[var(--dim)] opacity-30 tracking-[-0.03em]">
           x???
         </p>
-        <p className="text-[var(--muted)] mt-4">
+        <p className="text-[var(--dim)] text-[11px] tracking-[0.1em] mt-4">
           Analyze a wallet to see projections
         </p>
       </div>
@@ -30,17 +30,17 @@ export function ProjectionDisplay({
 
   if (!hasTarget || !projection) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-6xl md:text-7xl font-black text-[var(--muted)] opacity-30">
+      <div className="py-16 text-center">
+        <p className="text-[60px] md:text-[80px] font-bold text-[var(--dim)] opacity-30 tracking-[-0.03em]">
           x???
         </p>
-        <p className="text-[var(--muted)] mt-4">Set a target to see your potential</p>
+        <p className="text-[var(--dim)] text-[11px] tracking-[0.1em] mt-4">Set a target to see your potential</p>
       </div>
     );
   }
 
   return (
-    <div className="py-8 space-y-6">
+    <div className="py-10 space-y-10">
       {/* Main multiplier display */}
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
@@ -48,53 +48,52 @@ export function ProjectionDisplay({
         transition={{ duration: 0.3 }}
         className="text-center"
       >
-        <p className="text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter">
-          <span className="text-[var(--accent)]">x</span>
-          <AnimatedNumber value={projection.multiplierFromEntry} />
+        <p className="text-[80px] md:text-[100px] lg:text-[120px] font-bold tracking-[-0.03em] leading-[0.9]">
+          x<AnimatedNumber value={projection.multiplierFromEntry} />
         </p>
-        <p className="text-lg md:text-xl text-[var(--muted)] mt-2 uppercase tracking-widest">
+        <p className="text-[10px] tracking-[0.3em] text-[var(--muted)] mt-4 uppercase">
           From Your Entry
         </p>
       </motion.div>
 
       {/* Value projections */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-          <p className="text-sm text-[var(--muted)] uppercase tracking-wider mb-1">
+      <div className="grid gap-px md:grid-cols-2 bg-[var(--border)]">
+        <div className="p-6 bg-[var(--bg)]">
+          <p className="text-[9px] tracking-[0.15em] text-[var(--dim)] uppercase mb-2">
             Value at Target
           </p>
-          <p className="text-2xl md:text-3xl font-bold text-green-400">
+          <p className="text-2xl md:text-3xl font-bold text-[var(--positive)]">
             {formatCurrency(projection.valueAtTarget)}
           </p>
         </div>
 
-        <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-          <p className="text-sm text-[var(--muted)] uppercase tracking-wider mb-1">
+        <div className="p-6 bg-[var(--bg)]">
+          <p className="text-[9px] tracking-[0.15em] text-[var(--dim)] uppercase mb-2">
             Profit from Entry
           </p>
-          <p className="text-2xl md:text-3xl font-bold text-green-400">
+          <p className="text-2xl md:text-3xl font-bold text-[var(--positive)]">
             +{formatCurrency(projection.profitFromEntry)}
           </p>
         </div>
       </div>
 
       {/* Additional metrics */}
-      <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--muted)]">
+      <div className="flex flex-wrap justify-center gap-8 text-[11px]">
         <div>
-          <span>Target MC: </span>
-          <span className="text-[var(--text)] font-mono">
+          <span className="text-[var(--dim)] tracking-[0.1em]">Target MC: </span>
+          <span className="text-[var(--white)] font-mono">
             {formatCurrency(projection.targetMarketCap)}
           </span>
         </div>
         <div>
-          <span>Target Price: </span>
-          <span className="text-[var(--text)] font-mono">
+          <span className="text-[var(--dim)] tracking-[0.1em]">Target Price: </span>
+          <span className="text-[var(--white)] font-mono">
             {formatSmallPrice(projection.targetPrice)}
           </span>
         </div>
         <div>
-          <span>From Current: </span>
-          <span className="text-[var(--text)] font-mono">
+          <span className="text-[var(--dim)] tracking-[0.1em]">From Current: </span>
+          <span className="text-[var(--white)] font-mono">
             x{projection.multiplierFromCurrent.toFixed(1)}
           </span>
         </div>

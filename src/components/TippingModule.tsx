@@ -28,7 +28,6 @@ export function TippingModule() {
       setLastSignature(signature);
       setTipStatus("success");
 
-      // Reset after 3 seconds
       setTimeout(() => {
         setTipStatus("idle");
         setLastSignature(null);
@@ -37,7 +36,6 @@ export function TippingModule() {
       setTipError(err instanceof Error ? err.message : "Transaction failed");
       setTipStatus("error");
 
-      // Reset after 3 seconds
       setTimeout(() => {
         setTipStatus("idle");
         setTipError(null);
@@ -48,15 +46,15 @@ export function TippingModule() {
   // Phantom not installed
   if (!isAvailable) {
     return (
-      <div className="w-full max-w-md mx-auto p-6 border border-[var(--border)] rounded-lg text-center">
-        <p className="text-sm text-[var(--muted)] mb-4">
-          Install Phantom to support the movement
+      <div className="text-center">
+        <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--dim)] mb-8">
+          Support the Movement
         </p>
         <a
           href="https://phantom.app/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block px-6 py-3 bg-[var(--border)] text-white font-semibold rounded-lg hover:bg-[var(--muted)] transition-colors"
+          className="inline-block text-[11px] font-medium tracking-[0.15em] uppercase bg-[var(--purple)] text-[var(--black)] px-8 py-4 hover:opacity-90 transition-opacity"
         >
           Get Phantom
         </a>
@@ -65,28 +63,28 @@ export function TippingModule() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <p className="text-sm uppercase tracking-widest text-[var(--muted)] text-center mb-6">
+    <div className="text-center">
+      <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--dim)] mb-10">
         Support the Movement
       </p>
 
       {/* Wallet status */}
       {isConnected && publicKey && (
-        <p className="text-xs text-[var(--muted)] text-center mb-4 font-mono">
+        <p className="text-[10px] text-[var(--muted)] mb-6">
           {publicKey.slice(0, 4)}...{publicKey.slice(-4)}
         </p>
       )}
 
       {/* Tip buttons */}
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center mb-6">
         {TIP_AMOUNTS.map((amount) => (
           <motion.button
             key={amount}
             onClick={() => handleTip(amount)}
             disabled={tipStatus === "pending"}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex-1 py-4 px-6 bg-gradient-to-br from-purple-600 to-purple-800 text-white font-bold text-lg rounded-lg hover:from-purple-500 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="text-[12px] font-medium tracking-[0.1em] bg-[var(--white)] text-[var(--black)] px-12 py-4 hover:bg-[var(--muted)] hover:text-[var(--white)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {tipStatus === "pending" ? (
               <span className="inline-block animate-pulse">...</span>
@@ -99,8 +97,8 @@ export function TippingModule() {
 
       {/* Connect prompt */}
       {!isConnected && (
-        <p className="text-xs text-[var(--muted)] text-center mt-4">
-          Click to connect Phantom
+        <p className="text-[10px] text-[var(--dim)]">
+          Click to connect Phantom wallet
         </p>
       )}
 
@@ -111,9 +109,9 @@ export function TippingModule() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mt-4 p-3 bg-green-900/30 border border-green-700 rounded-lg text-center"
+            className="mt-6 p-4 border border-[var(--positive)] text-center"
           >
-            <p className="text-green-400 text-sm font-semibold">
+            <p className="text-[var(--positive)] text-sm font-medium">
               Thank you, GIGACHAD
             </p>
             {lastSignature && (
@@ -121,7 +119,7 @@ export function TippingModule() {
                 href={`https://solscan.io/tx/${lastSignature}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-green-500 hover:underline mt-1 inline-block"
+                className="text-[10px] text-[var(--positive)] hover:underline mt-2 inline-block"
               >
                 View transaction
               </a>
@@ -134,9 +132,9 @@ export function TippingModule() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mt-4 p-3 bg-red-900/30 border border-red-700 rounded-lg text-center"
+            className="mt-6 p-4 border border-[var(--negative)] text-center"
           >
-            <p className="text-red-400 text-sm">
+            <p className="text-[var(--negative)] text-sm">
               {tipError || walletError || "Transaction failed"}
             </p>
           </motion.div>

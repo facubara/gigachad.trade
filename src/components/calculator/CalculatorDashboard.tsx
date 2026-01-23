@@ -106,9 +106,9 @@ export function CalculatorDashboard() {
   const hasTarget = targetValue !== null && targetValue > 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-px bg-[var(--border)]">
       {/* Wallet Input Section */}
-      <section className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
+      <section className="p-8 md:p-10 bg-[var(--steel)]">
         <WalletInput
           onAnalyze={analyze}
           isLoading={isLoading}
@@ -117,14 +117,14 @@ export function CalculatorDashboard() {
           isCacheAvailable={isCacheAvailable}
         />
         {error && (
-          <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+          <div className="mt-6 p-4 border border-[var(--negative)] text-[var(--negative)] text-[11px] tracking-[0.05em]">
             {error}
           </div>
         )}
       </section>
 
       {/* Holdings Display Section */}
-      <section className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
+      <section className="p-8 md:p-10 bg-[var(--steel)]">
         <HoldingsDisplay
           balance={balance}
           entryPrice={analysis?.weightedAverageEntryPrice ?? null}
@@ -137,7 +137,7 @@ export function CalculatorDashboard() {
       </section>
 
       {/* Target Input Section */}
-      <section className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
+      <section className="p-8 md:p-10 bg-[var(--steel)]">
         <TargetInput
           targetMode={targetMode}
           onTargetModeChange={setTargetMode}
@@ -148,7 +148,7 @@ export function CalculatorDashboard() {
       </section>
 
       {/* Projection Display Section */}
-      <section className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
+      <section className="p-8 md:p-10 bg-[var(--steel)]">
         <ProjectionDisplay
           projection={projection}
           hasWalletData={hasWalletData}
@@ -158,37 +158,37 @@ export function CalculatorDashboard() {
 
       {/* Transaction History (if available) */}
       {analysis && analysis.transactions.length > 0 && (
-        <section className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted)] mb-4">
+        <section className="p-8 md:p-10 bg-[var(--steel)]">
+          <h2 className="text-[10px] tracking-[0.2em] uppercase text-[var(--dim)] mb-6">
             Transaction History
           </h2>
 
           {/* Summary stats */}
-          <div className="grid gap-4 md:grid-cols-3 text-sm mb-6">
+          <div className="grid gap-6 md:grid-cols-3 text-sm mb-8">
             <div>
-              <span className="text-[var(--muted)]">Total Bought: </span>
-              <span className="font-mono">
+              <span className="text-[9px] tracking-[0.15em] uppercase text-[var(--dim)]">Total Bought</span>
+              <p className="font-mono text-lg mt-1">
                 {formatNumber(analysis.totalBought)} GIGA
-              </span>
+              </p>
             </div>
             <div>
-              <span className="text-[var(--muted)]">Total Sold: </span>
-              <span className="font-mono">
+              <span className="text-[9px] tracking-[0.15em] uppercase text-[var(--dim)]">Total Sold</span>
+              <p className="font-mono text-lg mt-1">
                 {formatNumber(analysis.totalSold)} GIGA
-              </span>
+              </p>
             </div>
             <div>
-              <span className="text-[var(--muted)]">Total Transactions: </span>
-              <span className="font-mono">{analysis.transactions.length}</span>
+              <span className="text-[9px] tracking-[0.15em] uppercase text-[var(--dim)]">Total Transactions</span>
+              <p className="font-mono text-lg mt-1">{analysis.transactions.length}</p>
             </div>
           </div>
 
           {/* Transaction table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto border border-[var(--border)]">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="text-left py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs">
+                <tr className="border-b border-[var(--border)] bg-[var(--bg)]">
+                  <th className="text-left py-3 px-4 text-[var(--dim)] font-medium uppercase tracking-[0.1em] text-[9px]">
                     Action
                   </th>
                   <SortableHeader
@@ -226,24 +226,24 @@ export function CalculatorDashboard() {
                   .map((tx) => (
                     <tr
                       key={tx.signature}
-                      className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-secondary)]/50"
+                      className="border-b border-[var(--border)] hover:bg-[var(--border)]/30"
                     >
-                      <td className="py-3 px-2">
+                      <td className="py-3 px-4">
                         <span
-                          className={`font-mono font-medium ${
-                            tx.type === "buy" ? "text-green-400" : "text-red-400"
+                          className={`font-mono font-medium text-[11px] tracking-[0.05em] ${
+                            tx.type === "buy" ? "text-[var(--positive)]" : "text-[var(--negative)]"
                           }`}
                         >
                           {tx.type.toUpperCase()}
                         </span>
                       </td>
-                      <td className="py-3 px-2 text-right font-mono">
-                        {tx.quoteAmount > 0 ? tx.quoteAmount.toFixed(4) : "-"}
+                      <td className="py-3 px-4 text-right font-mono text-[12px]">
+                        {tx.quoteAmount > 0 ? tx.quoteAmount.toFixed(4) : "—"}
                       </td>
-                      <td className="py-3 px-2 text-right font-mono">
+                      <td className="py-3 px-4 text-right font-mono text-[12px]">
                         {formatNumber(tx.gigachadAmount)}
                       </td>
-                      <td className="py-3 px-2 text-right text-[var(--muted)]">
+                      <td className="py-3 px-4 text-right text-[var(--muted)] text-[11px]">
                         {new Date(tx.timestamp).toLocaleDateString()}
                       </td>
                     </tr>
@@ -254,23 +254,22 @@ export function CalculatorDashboard() {
 
           {/* Pagination */}
           {analysis.transactions.length > TRANSACTIONS_PER_PAGE && (
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
-              <span className="text-sm text-[var(--muted)]">
-                Showing {(currentPage - 1) * TRANSACTIONS_PER_PAGE + 1}-
+            <div className="flex items-center justify-between mt-6 pt-6 border-t border-[var(--border)]">
+              <span className="text-[10px] tracking-[0.1em] text-[var(--muted)]">
+                Showing {(currentPage - 1) * TRANSACTIONS_PER_PAGE + 1}–
                 {Math.min(currentPage * TRANSACTIONS_PER_PAGE, analysis.transactions.length)} of{" "}
                 {analysis.transactions.length}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-px bg-[var(--border)]">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1 text-sm border border-[var(--border)] rounded hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-[10px] tracking-[0.1em] uppercase bg-[var(--steel)] hover:bg-[var(--border)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  Previous
+                  Prev
                 </button>
-                <span className="px-3 py-1 text-sm">
-                  Page {currentPage} of{" "}
-                  {Math.ceil(analysis.transactions.length / TRANSACTIONS_PER_PAGE)}
+                <span className="px-4 py-2 text-[10px] tracking-[0.1em] bg-[var(--steel)]">
+                  {currentPage} / {Math.ceil(analysis.transactions.length / TRANSACTIONS_PER_PAGE)}
                 </span>
                 <button
                   onClick={() =>
@@ -285,7 +284,7 @@ export function CalculatorDashboard() {
                     currentPage >=
                     Math.ceil(analysis.transactions.length / TRANSACTIONS_PER_PAGE)
                   }
-                  className="px-3 py-1 text-sm border border-[var(--border)] rounded hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-[10px] tracking-[0.1em] uppercase bg-[var(--steel)] hover:bg-[var(--border)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Next
                 </button>
@@ -317,7 +316,7 @@ function SortableHeader({
 
   return (
     <th
-      className={`py-3 px-2 text-[var(--muted)] font-medium uppercase tracking-wider text-xs cursor-pointer hover:text-[var(--text)] transition-colors select-none ${
+      className={`py-3 px-4 text-[var(--dim)] font-medium uppercase tracking-[0.1em] text-[9px] cursor-pointer hover:text-[var(--white)] transition-colors select-none ${
         align === "right" ? "text-right" : "text-left"
       }`}
       onClick={() => onSort(column)}
@@ -345,10 +344,10 @@ function SortIndicator({
   return (
     <span className="inline-flex flex-col">
       <svg
-        className={`w-3 h-3 transition-colors ${
+        className={`w-2 h-2 transition-colors ${
           isActive && direction === "asc"
-            ? "text-[var(--accent)]"
-            : "text-[var(--muted)]"
+            ? "text-[var(--white)]"
+            : "text-[var(--dim)]"
         }`}
         viewBox="0 0 10 6"
         fill="currentColor"
@@ -356,10 +355,10 @@ function SortIndicator({
         <path d="M5 0L10 6H0L5 0Z" />
       </svg>
       <svg
-        className={`w-3 h-3 -mt-1 transition-colors ${
+        className={`w-2 h-2 -mt-0.5 transition-colors ${
           isActive && direction === "desc"
-            ? "text-[var(--accent)]"
-            : "text-[var(--muted)]"
+            ? "text-[var(--white)]"
+            : "text-[var(--dim)]"
         }`}
         viewBox="0 0 10 6"
         fill="currentColor"

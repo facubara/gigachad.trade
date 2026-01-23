@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 
 interface MultiplierDisplayProps {
   multiplier: number | null;
+  isLoading?: boolean;
 }
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -30,34 +31,28 @@ function AnimatedNumber({ value }: { value: number }) {
   return <motion.span>{display}</motion.span>;
 }
 
-export function MultiplierDisplay({ multiplier }: MultiplierDisplayProps) {
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
-    if (multiplier !== null && !hasAnimated) {
-      setHasAnimated(true);
-    }
-  }, [multiplier, hasAnimated]);
+export function MultiplierDisplay({ multiplier, isLoading }: MultiplierDisplayProps) {
+  if (isLoading) {
+    return (
+      <div className="h-[120px] md:h-[160px] flex items-center">
+        <div className="h-24 w-48 bg-[var(--border)] animate-pulse" />
+      </div>
+    );
+  }
 
   return (
-    <div className="text-center py-8">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
-        <p className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter">
-          <span className="text-[var(--accent)]">x</span>
-          {multiplier !== null ? (
-            <AnimatedNumber value={multiplier} />
-          ) : (
-            <span className="text-[var(--muted)]">—</span>
-          )}
-        </p>
-        <p className="text-xl md:text-2xl text-[var(--muted)] mt-2 uppercase tracking-widest">
-          to $1B
-        </p>
-      </motion.div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <p className="text-[80px] md:text-[120px] lg:text-[160px] font-bold leading-[0.9] tracking-[-0.03em]">
+        x{multiplier !== null ? (
+          <AnimatedNumber value={multiplier} />
+        ) : (
+          <span className="text-[var(--dim)]">—</span>
+        )}
+      </p>
+    </motion.div>
   );
 }

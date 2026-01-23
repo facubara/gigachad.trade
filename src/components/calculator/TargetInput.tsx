@@ -46,20 +46,20 @@ export function TargetInput({
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted)]">
+    <div className="space-y-6">
+      <h2 className="text-[10px] tracking-[0.2em] uppercase text-[var(--dim)]">
         Set Target
       </h2>
 
       {/* Mode toggle */}
-      <div className="flex gap-2">
+      <div className="flex gap-px bg-[var(--border)]">
         <button
           onClick={() => onTargetModeChange("marketCap")}
           disabled={disabled}
-          className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 py-3 px-6 text-[11px] tracking-[0.15em] uppercase font-medium transition-colors ${
             targetMode === "marketCap"
-              ? "bg-[var(--accent)] text-black"
-              : "bg-[var(--bg-secondary)] text-[var(--muted)] hover:text-[var(--text)]"
+              ? "bg-[var(--white)] text-[var(--black)]"
+              : "bg-[var(--steel)] text-[var(--muted)] hover:text-[var(--white)]"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           Market Cap
@@ -67,10 +67,10 @@ export function TargetInput({
         <button
           onClick={() => onTargetModeChange("tokenPrice")}
           disabled={disabled}
-          className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 py-3 px-6 text-[11px] tracking-[0.15em] uppercase font-medium transition-colors ${
             targetMode === "tokenPrice"
-              ? "bg-[var(--accent)] text-black"
-              : "bg-[var(--bg-secondary)] text-[var(--muted)] hover:text-[var(--text)]"
+              ? "bg-[var(--white)] text-[var(--black)]"
+              : "bg-[var(--steel)] text-[var(--muted)] hover:text-[var(--white)]"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           Token Price
@@ -78,8 +78,8 @@ export function TargetInput({
       </div>
 
       {/* Value input */}
-      <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+      <div className="relative border border-[var(--border)]">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--dim)] text-sm">
           $
         </span>
         <input
@@ -90,23 +90,23 @@ export function TargetInput({
             targetMode === "marketCap" ? "Enter market cap..." : "Enter price..."
           }
           disabled={disabled}
-          className="w-full pl-8 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] transition-colors font-mono disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full pl-8 pr-4 py-4 bg-[var(--bg)] text-[var(--white)] placeholder:text-[var(--dim)] focus:outline-none font-mono text-[12px] tracking-[0.02em] disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
       {/* Presets (only for market cap mode) */}
       {targetMode === "marketCap" && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-px bg-[var(--border)]">
           {MARKET_CAP_PRESETS.map((preset) => (
             <button
               key={preset.value}
               onClick={() => handlePresetClick(preset.value)}
               disabled={disabled}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-5 py-3 text-[11px] tracking-[0.1em] font-medium transition-colors ${
                 targetValue === preset.value
-                  ? "bg-[var(--accent)] text-black"
-                  : "bg-[var(--bg-secondary)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--text)]"
-              } border border-[var(--border)] disabled:opacity-50 disabled:cursor-not-allowed`}
+                  ? "bg-[var(--white)] text-[var(--black)]"
+                  : "bg-[var(--steel)] text-[var(--muted)] hover:text-[var(--white)]"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {preset.label}
             </button>
