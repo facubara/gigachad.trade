@@ -26,7 +26,7 @@ export const PRICE_CACHE_TTL_MS = 30_000;
 export const MILESTONES = [
   { value: 10_000_000, label: "Warming Up" },
   { value: 50_000_000, label: "Alpha Phase" },
-  { value: 100_000_000, label: "Sigma Territory" },
+  { value: 100_000_000, label: "Chad Mode" },
   { value: 500_000_000, label: "Final Form" },
   { value: 1_000_000_000, label: "Ascended" },
 ] as const;

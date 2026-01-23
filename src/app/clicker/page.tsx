@@ -1,23 +1,19 @@
 import { GigaClicker } from "@/components/GigaClicker";
-import Link from "next/link";
 
 export default function ClickerPage() {
   return (
-    <main className="min-h-screen flex flex-col px-4 py-8">
-      {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <Link
-          href="/"
-          className="text-sm text-[var(--muted)] hover:text-white transition-colors"
-        >
-          ← Back
-        </Link>
-        <h1 className="text-2xl font-bold tracking-tight">GIGA CLICKER</h1>
-        <div className="w-12" /> {/* Spacer for alignment */}
-      </header>
+    <main className="min-h-screen flex flex-col">
+      {/* Page Header */}
+      <div className="border-b border-[var(--border)]">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-[60px] py-6 flex items-center justify-center">
+          <h1 className="text-[11px] font-medium tracking-[0.2em] uppercase">
+            Giga Clicker
+          </h1>
+        </div>
+      </div>
 
       {/* Clicker */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-16">
         <GigaClicker />
       </div>
     </main>

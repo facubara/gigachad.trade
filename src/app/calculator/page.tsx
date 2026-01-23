@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CalculatorDashboard } from "@/components/calculator";
 
 export const metadata = {
@@ -9,51 +8,23 @@ export const metadata = {
 
 export default function CalculatorPage() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      {/* Header */}
-      <header className="border-b border-[var(--border)]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--text)] transition-colors"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span className="text-sm">Back</span>
-          </Link>
-
-          <h1 className="text-lg font-bold uppercase tracking-wider">
+    <main className="min-h-screen">
+      {/* Page Header */}
+      <div className="border-b border-[var(--border)]">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-[60px] py-6 flex items-center justify-center">
+          <h1 className="text-[11px] font-medium tracking-[0.2em] uppercase">
             Portfolio Calculator
           </h1>
-
-          <div className="w-16" /> {/* Spacer for centering */}
         </div>
-      </header>
-
-      {/* Main content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <CalculatorDashboard />
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-[var(--border)] mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-[var(--muted)]">
-          <p>
-            Entry price is calculated from your on-chain transaction history.
-            Results are estimates only.
-          </p>
-        </div>
-      </footer>
+      {/* Main content */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-[60px] py-12">
+        <CalculatorDashboard />
+        <p className="text-[10px] tracking-[0.1em] text-[var(--dim)] text-center mt-12">
+          Entry price calculated from on-chain transaction history. Results are estimates only.
+        </p>
+      </div>
     </main>
   );
 }

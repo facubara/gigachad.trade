@@ -14,12 +14,17 @@ export interface DexScreenerPair {
     symbol: string;
   };
   priceUsd: string;
+  priceChange: {
+    h24: number;
+  };
   volume: {
     h24: number;
   };
   liquidity: {
     usd: number;
   };
+  fdv: number;
+  marketCap: number;
 }
 
 interface DexScreenerResponse {
@@ -28,6 +33,10 @@ interface DexScreenerResponse {
 
 export interface TokenPriceData {
   priceUsd: number;
+  priceChange24h: number;
+  marketCap: number | null;
+  fdv: number | null;
+  volume24h: number | null;
   timestamp: number;
 }
 
@@ -71,6 +80,10 @@ export async function fetchTokenPrice(): Promise<TokenPriceData> {
 
   return {
     priceUsd,
+    priceChange24h: bestPair.priceChange?.h24 ?? 0,
+    marketCap: bestPair.marketCap ?? null,
+    fdv: bestPair.fdv ?? null,
+    volume24h: bestPair.volume?.h24 ?? null,
     timestamp: Date.now(),
   };
 }

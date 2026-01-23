@@ -7,8 +7,8 @@ import { DONATION_WALLET_ADDRESS } from "@/lib/constants";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/clicker", label: "Push Up Game" },
-  { href: "/calculator", label: "Portfolio Calculator" },
+  { href: "/clicker", label: "Game" },
+  { href: "/calculator", label: "Calculator" },
 ] as const;
 
 export function Header() {
@@ -21,7 +21,6 @@ export function Header() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
       const textArea = document.createElement("textarea");
       textArea.value = DONATION_WALLET_ADDRESS;
       document.body.appendChild(textArea);
@@ -36,57 +35,75 @@ export function Header() {
   const shortAddress = `${DONATION_WALLET_ADDRESS.slice(0, 4)}...${DONATION_WALLET_ADDRESS.slice(-4)}`;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo placeholder */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-[var(--accent)] rounded-lg flex items-center justify-center">
-            <span className="text-black font-black text-lg">G</span>
-          </div>
-          <span className="font-bold text-lg hidden sm:block">GIGACHAD</span>
-        </Link>
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg)]">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-[60px] h-[60px] flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center">
+            <span className="font-bold text-sm tracking-[0.15em]">GIGACHAD</span>
+          </Link>
+          <a
+            href="https://x.com/billionducks"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[9px] text-[var(--dim)] hover:text-[var(--muted)] transition-colors hidden sm:block"
+          >
+            by @billionducks
+          </a>
+        </div>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-1 sm:gap-2">
+        <nav className="hidden md:flex items-center gap-8">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`text-[10px] tracking-[0.1em] uppercase transition-colors ${
                   isActive
-                    ? "bg-[var(--accent)] text-black"
-                    : "text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)]"
+                    ? "text-[var(--white)]"
+                    : "text-[var(--muted)] hover:text-[var(--white)]"
                 }`}
               >
-                <span className="hidden sm:inline">{item.label}</span>
-                <span className="sm:hidden">
-                  {item.label === "Home" && "Home"}
-                  {item.label === "Push Up Game" && "Game"}
-                  {item.label === "Portfolio Calculator" && "Calc"}
-                </span>
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Donation address */}
+        {/* Mobile Navigation */}
+        <nav className="flex md:hidden items-center gap-4">
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-[10px] tracking-[0.05em] uppercase transition-colors ${
+                  isActive
+                    ? "text-[var(--white)]"
+                    : "text-[var(--muted)] hover:text-[var(--white)]"
+                }`}
+              >
+                {item.label === "Home" && "Home"}
+                {item.label === "Game" && "Game"}
+                {item.label === "Calculator" && "Calc"}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Wallet button */}
         <button
           onClick={handleCopyAddress}
-          className="flex items-center gap-2 px-3 py-2 text-xs font-mono text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+          className="text-[9px] tracking-[0.05em] text-[var(--dim)] px-3 py-2 border border-[var(--border)] hover:border-[var(--dim)] hover:text-[var(--muted)] transition-all"
           title={`Donate: ${DONATION_WALLET_ADDRESS}`}
         >
-          <span className="hidden md:inline">Donate:</span>
-          <span>{shortAddress}</span>
           {copied ? (
-            <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <span className="text-[var(--positive)]">Copied!</span>
           ) : (
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
+            <span>{shortAddress}</span>
           )}
         </button>
       </div>
