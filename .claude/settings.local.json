@@ -16,7 +16,13 @@
       "Bash(npx playwright:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_wait_for",
+      "Bash(taskkill //F //PID 37900)",
+      "mcp__playwright__browser_tabs"
     ]
   }
 }
