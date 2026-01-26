@@ -1,19 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 import { ProjectionResult } from "@/hooks/useCalculator";
+import { ShareButton } from "@/components/ShareButton";
 
 interface ProjectionDisplayProps {
   projection: ProjectionResult | null;
   hasWalletData: boolean;
   hasTarget: boolean;
+  address?: string | null;
+  balance?: number | null;
 }
 
 export function ProjectionDisplay({
   projection,
   hasWalletData,
   hasTarget,
+  address,
+  balance,
 }: ProjectionDisplayProps) {
   if (!hasWalletData) {
     return (
@@ -98,6 +103,18 @@ export function ProjectionDisplay({
           </span>
         </div>
       </div>
+
+      {/* Share button */}
+      <div className="flex justify-center pt-4">
+        <ShareButton
+          type="portfolio"
+          address={address || undefined}
+          targetValue={formatShareValue(projection.valueAtTarget)}
+          entryMultiplier={projection.multiplierFromEntry}
+          currentMultiplier={projection.multiplierFromCurrent}
+          holdings={balance ? formatShareHoldings(balance) : undefined}
+        />
+      </div>
     </div>
   );
 }
@@ -152,4 +169,30 @@ function formatSmallPrice(price: number): string {
     return `$${price.toFixed(6)}`;
   }
   return `$${price.toFixed(4)}`;
+}
+
+function formatShareValue(num: number): string {
+  if (num >= 1_000_000_000) {
+    return `${(num / 1_000_000_000).toFixed(2)}B`;
+  }
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(1)}K`;
+  }
+  return num.toFixed(0);
+}
+
+function formatShareHoldings(num: number): string {
+  if (num >= 1_000_000_000) {
+    return `${(num / 1_000_000_000).toFixed(2)}B`;
+  }
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(1)}K`;
+  }
+  return num.toLocaleString();
 }

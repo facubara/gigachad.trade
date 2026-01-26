@@ -8,7 +8,7 @@ export default function Home() {
       <TokenDashboard />
 
       {/* Tipping Section */}
-      <section className="py-24 border-t border-[var(--border)]">
+      <section id="support-section" className="py-24 border-t border-[var(--border)]">
         <div className="max-w-[1200px] mx-auto px-6 md:px-[60px]">
           <TippingModule />
         </div>

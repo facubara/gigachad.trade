@@ -13,8 +13,7 @@ export const TOTAL_SUPPLY = 9_600_000_000;
 export const TARGET_MARKET_CAP = 1_000_000_000;
 
 // Donation wallet address for SOL tips (Phantom only)
-// Replace with actual donation wallet address
-export const DONATION_WALLET_ADDRESS = "GIGA_DONATION_WALLET_ADDRESS_HERE";
+export const DONATION_WALLET_ADDRESS = "2oLMHvHrVm9kVRKf2RM2GZAbFXFwkDLEzueJLohjVbiU";
 
 // DexScreener API configuration
 export const DEXSCREENER_API_URL = "https://api.dexscreener.com/latest/dex/tokens";

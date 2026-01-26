@@ -4,9 +4,10 @@ import { useTokenPrice } from "@/hooks/useTokenPrice";
 import { TOTAL_SUPPLY, TARGET_MARKET_CAP } from "@/lib/constants";
 import { MarketCapProgressBar } from "./MarketCapProgressBar";
 import { MultiplierDisplay } from "./MultiplierDisplay";
+import { ShareButton } from "./ShareButton";
 
 export function TokenDashboard() {
-  const { price, priceChange24h, marketCap: apiMarketCap, volume24h, isLoading, isStale } = useTokenPrice();
+  const { price, priceChange24h, marketCap: apiMarketCap, volume24h, volumeChange24h, isLoading, isStale } = useTokenPrice();
 
   // Compute derived values - use API market cap if available, otherwise calculate
   const marketCap = apiMarketCap ?? (price !== null ? price * TOTAL_SUPPLY : null);
@@ -37,9 +38,18 @@ export function TokenDashboard() {
                 Multiplier to Target
               </p>
               <MultiplierDisplay multiplier={multiplier} isLoading={isLoading} />
-              <p className="text-[11px] text-[var(--muted)] mt-5 tracking-[0.1em]">
-                To $1B Market Cap
-              </p>
+              <div className="flex items-center gap-4 mt-5">
+                <p className="text-[11px] text-[var(--muted)] tracking-[0.1em]">
+                  To $1B Market Cap
+                </p>
+                {multiplier !== null && (
+                  <ShareButton
+                    type="general"
+                    multiplier={multiplier}
+                    progress={progress}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Giga Definition */}
@@ -82,6 +92,7 @@ export function TokenDashboard() {
             <DataCell
               value={volume24h !== null ? formatMarketCap(volume24h) : "—"}
               label="Volume 24h"
+              change={volumeChange24h}
               isLoading={isLoading}
             />
           </div>

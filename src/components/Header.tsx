@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { DONATION_WALLET_ADDRESS } from "@/lib/constants";
+import { useState, useRef, useEffect } from "react";
+import { usePhantom } from "@/hooks/usePhantom";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -13,26 +13,41 @@ const NAV_ITEMS = [
 
 export function Header() {
   const pathname = usePathname();
-  const [copied, setCopied] = useState(false);
+  const { isAvailable, isConnected, publicKey, connect, disconnect } = usePhantom();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleCopyAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(DONATION_WALLET_ADDRESS);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const textArea = document.createElement("textarea");
-      textArea.value = DONATION_WALLET_ADDRESS;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleDonateClick = () => {
+    const supportSection = document.getElementById("support-section");
+    if (supportSection) {
+      supportSection.scrollIntoView({ behavior: "smooth" });
+    } else if (pathname !== "/") {
+      window.location.href = "/#support-section";
     }
   };
 
-  const shortAddress = `${DONATION_WALLET_ADDRESS.slice(0, 4)}...${DONATION_WALLET_ADDRESS.slice(-4)}`;
+  const handleConnectClick = async () => {
+    if (isConnected) {
+      setDropdownOpen(!dropdownOpen);
+    } else {
+      await connect();
+    }
+  };
+
+  const shortAddress = publicKey
+    ? `${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`
+    : null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg)]">
@@ -94,18 +109,54 @@ export function Header() {
           })}
         </nav>
 
-        {/* Wallet button */}
-        <button
-          onClick={handleCopyAddress}
-          className="text-[9px] tracking-[0.05em] text-[var(--dim)] px-3 py-2 border border-[var(--border)] hover:border-[var(--dim)] hover:text-[var(--muted)] transition-all"
-          title={`Donate: ${DONATION_WALLET_ADDRESS}`}
-        >
-          {copied ? (
-            <span className="text-[var(--positive)]">Copied!</span>
-          ) : (
-            <span>{shortAddress}</span>
-          )}
-        </button>
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          {/* Donate button */}
+          <button
+            onClick={handleDonateClick}
+            className="text-[9px] tracking-[0.1em] uppercase text-[var(--dim)] px-3 py-2 border border-[var(--border)] hover:border-[var(--dim)] hover:text-[var(--muted)] transition-all"
+          >
+            Donate
+          </button>
+
+          {/* Connect/Wallet button */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={handleConnectClick}
+              className={`text-[9px] tracking-[0.1em] uppercase px-3 py-2 border transition-all ${
+                isConnected
+                  ? "border-[var(--positive)] text-[var(--positive)] hover:bg-[var(--positive)] hover:text-[var(--black)]"
+                  : "border-[var(--purple)] text-[var(--purple)] hover:bg-[var(--purple)] hover:text-[var(--black)]"
+              }`}
+            >
+              {isConnected && shortAddress ? (
+                <span className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[var(--positive)] rounded-full" />
+                  {shortAddress}
+                </span>
+              ) : isAvailable ? (
+                "Connect"
+              ) : (
+                "Get Wallet"
+              )}
+            </button>
+
+            {/* Dropdown menu */}
+            {isConnected && dropdownOpen && (
+              <div className="absolute right-0 mt-1 py-1 bg-[var(--steel)] border border-[var(--border)] min-w-[120px] z-50">
+                <button
+                  onClick={() => {
+                    disconnect();
+                    setDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-[9px] tracking-[0.1em] uppercase text-[var(--muted)] hover:text-[var(--white)] hover:bg-[var(--border)] transition-colors"
+                >
+                  Disconnect
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </header>
   );

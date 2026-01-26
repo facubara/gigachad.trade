@@ -112,4 +112,5 @@ export const MARKET_CAP_PRESETS = [
   { value: 500_000_000, label: "$500M" },
   { value: 1_000_000_000, label: "$1B" },
   { value: 5_000_000_000, label: "$5B" },
+  { value: 1_000_000_000_000, label: "$1T" },
 ] as const;

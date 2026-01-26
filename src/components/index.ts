@@ -4,3 +4,4 @@ export { MultiplierDisplay } from "./MultiplierDisplay";
 export { TokenDashboard } from "./TokenDashboard";
 export { GigaClicker } from "./GigaClicker";
 export { TippingModule } from "./TippingModule";
+export { ShareButton } from "./ShareButton";

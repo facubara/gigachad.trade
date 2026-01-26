@@ -50,7 +50,18 @@ function LoadingIndicator({ loadingState }: { loadingState: LoadingState }) {
 
           {status === "processing" && (
             <div className="w-48 h-px bg-[var(--border)] overflow-hidden">
-              <div className="h-full bg-[var(--white)] animate-pulse" />
+              <div
+                className="h-full w-1/3 bg-[var(--white)]"
+                style={{
+                  animation: "slide 1s ease-in-out infinite",
+                }}
+              />
+              <style>{`
+                @keyframes slide {
+                  0% { transform: translateX(-100%); }
+                  100% { transform: translateX(300%); }
+                }
+              `}</style>
             </div>
           )}
         </div>
@@ -80,8 +91,10 @@ export function HoldingsDisplay({
         <h2 className="text-[10px] tracking-[0.2em] uppercase text-[var(--dim)]">
           Your Holdings
         </h2>
-        <div className="h-12 bg-[var(--border)] animate-pulse" />
-        <div className="h-6 bg-[var(--border)] animate-pulse w-2/3" />
+        <div className="flex flex-col items-center justify-center py-12 space-y-6">
+          <LoadingSpinner />
+          <p className="text-[var(--muted)] text-sm tracking-[0.05em]">Loading...</p>
+        </div>
       </div>
     );
   }

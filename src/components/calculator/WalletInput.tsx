@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePhantom } from "@/hooks/usePhantom";
 import { LoadingState } from "@/types/cache";
 
@@ -22,6 +22,17 @@ export function WalletInput({
   const [inputAddress, setInputAddress] = useState("");
   const { isAvailable, isConnected, publicKey, connect, disconnect, error } =
     usePhantom();
+
+  // Track if we initiated the connection (to auto-analyze)
+  const pendingConnectionRef = useRef(false);
+
+  // Auto-analyze when wallet connects after user initiated connection
+  useEffect(() => {
+    if (pendingConnectionRef.current && isConnected && publicKey && !isLoading) {
+      pendingConnectionRef.current = false;
+      onAnalyze(publicKey);
+    }
+  }, [isConnected, publicKey, isLoading, onAnalyze]);
 
   // Get button text based on loading state
   const getButtonText = () => {
@@ -68,8 +79,11 @@ export function WalletInput({
 
   const handlePhantomConnect = async () => {
     if (isConnected && publicKey) {
+      // Already connected, just analyze
       onAnalyze(publicKey);
     } else {
+      // Mark that we're initiating a connection (so we auto-analyze when it completes)
+      pendingConnectionRef.current = true;
       await connect();
     }
   };

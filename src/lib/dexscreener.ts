@@ -19,6 +19,11 @@ export interface DexScreenerPair {
   };
   volume: {
     h24: number;
+    h6?: number;
+    h1?: number;
+  };
+  volumeChange?: {
+    h24?: number;
   };
   liquidity: {
     usd: number;
@@ -37,6 +42,7 @@ export interface TokenPriceData {
   marketCap: number | null;
   fdv: number | null;
   volume24h: number | null;
+  volumeChange24h: number | null;
   timestamp: number;
 }
 
@@ -84,6 +90,7 @@ export async function fetchTokenPrice(): Promise<TokenPriceData> {
     marketCap: bestPair.marketCap ?? null,
     fdv: bestPair.fdv ?? null,
     volume24h: bestPair.volume?.h24 ?? null,
+    volumeChange24h: bestPair.volumeChange?.h24 ?? null,
     timestamp: Date.now(),
   };
 }

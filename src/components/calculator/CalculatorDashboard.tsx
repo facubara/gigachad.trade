@@ -123,38 +123,107 @@ export function CalculatorDashboard() {
         )}
       </section>
 
-      {/* Holdings Display Section */}
-      <section className="p-8 md:p-10 bg-[var(--steel)]">
-        <HoldingsDisplay
-          balance={balance}
-          entryPrice={analysis?.weightedAverageEntryPrice ?? null}
-          currentPrice={currentPrice}
-          currentValue={currentValue}
-          buyCount={analysis?.transactions.filter((tx) => tx.type === "buy").length ?? null}
-          isLoading={isLoading || isPriceLoading}
-          loadingState={loadingState}
-        />
-      </section>
+      {/* Prompt to connect wallet when no data */}
+      {!hasWalletData && !isLoading && (
+        <section className="p-8 md:p-10 bg-[var(--steel)]">
+          <div className="py-16 flex flex-col items-center justify-center text-center space-y-6">
+            <div className="w-16 h-16 border border-[var(--border)] flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-[var(--dim)]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
+                />
+              </svg>
+            </div>
+            <div className="space-y-2">
+              <p className="text-[var(--white)] text-lg tracking-[0.02em]">
+                Connect Your Wallet
+              </p>
+              <p className="text-[var(--muted)] text-sm tracking-[0.02em] max-w-md">
+                Enter your Solana wallet address above to analyze your GIGA holdings and calculate potential gains
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-3 pt-4">
+              <div className="flex items-center gap-6 text-[10px] tracking-[0.15em] uppercase text-[var(--dim)]">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--dim)]" />
+                  View Holdings
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--dim)]" />
+                  Set Targets
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--dim)]" />
+                  See Projections
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/* Target Input Section */}
-      <section className="p-8 md:p-10 bg-[var(--steel)]">
-        <TargetInput
-          targetMode={targetMode}
-          onTargetModeChange={setTargetMode}
-          targetValue={targetValue}
-          onTargetValueChange={setTargetValue}
-          disabled={!hasWalletData}
-        />
-      </section>
+      {/* Show loading state */}
+      {isLoading && (
+        <section className="p-8 md:p-10 bg-[var(--steel)]">
+          <HoldingsDisplay
+            balance={balance}
+            entryPrice={analysis?.weightedAverageEntryPrice ?? null}
+            currentPrice={currentPrice}
+            currentValue={currentValue}
+            buyCount={analysis?.transactions.filter((tx) => tx.type === "buy").length ?? null}
+            isLoading={isLoading || isPriceLoading}
+            loadingState={loadingState}
+          />
+        </section>
+      )}
 
-      {/* Projection Display Section */}
-      <section className="p-8 md:p-10 bg-[var(--steel)]">
-        <ProjectionDisplay
-          projection={projection}
-          hasWalletData={hasWalletData}
-          hasTarget={hasTarget}
-        />
-      </section>
+      {/* Show full interface when wallet is connected */}
+      {hasWalletData && (
+        <>
+          {/* Holdings Display Section */}
+          <section className="p-8 md:p-10 bg-[var(--steel)]">
+            <HoldingsDisplay
+              balance={balance}
+              entryPrice={analysis?.weightedAverageEntryPrice ?? null}
+              currentPrice={currentPrice}
+              currentValue={currentValue}
+              buyCount={analysis?.transactions.filter((tx) => tx.type === "buy").length ?? null}
+              isLoading={isLoading || isPriceLoading}
+              loadingState={loadingState}
+            />
+          </section>
+
+          {/* Target Input Section */}
+          <section className="p-8 md:p-10 bg-[var(--steel)]">
+            <TargetInput
+              targetMode={targetMode}
+              onTargetModeChange={setTargetMode}
+              targetValue={targetValue}
+              onTargetValueChange={setTargetValue}
+              disabled={!hasWalletData}
+            />
+          </section>
+
+          {/* Projection Display Section */}
+          <section className="p-8 md:p-10 bg-[var(--steel)]">
+            <ProjectionDisplay
+              projection={projection}
+              hasWalletData={hasWalletData}
+              hasTarget={hasTarget}
+              address={analysis?.address}
+              balance={balance}
+            />
+          </section>
+        </>
+      )}
 
       {/* Transaction History (if available) */}
       {analysis && analysis.transactions.length > 0 && (

@@ -96,15 +96,15 @@ export function TargetInput({
 
       {/* Presets (only for market cap mode) */}
       {targetMode === "marketCap" && (
-        <div className="flex flex-wrap gap-px bg-[var(--border)]">
+        <div className="flex flex-wrap gap-px">
           {MARKET_CAP_PRESETS.map((preset) => (
             <button
               key={preset.value}
               onClick={() => handlePresetClick(preset.value)}
               disabled={disabled}
-              className={`px-5 py-3 text-[11px] tracking-[0.1em] font-medium transition-colors ${
+              className={`px-5 py-3 text-[11px] tracking-[0.1em] font-medium transition-colors border border-[var(--border)] ${
                 targetValue === preset.value
-                  ? "bg-[var(--white)] text-[var(--black)]"
+                  ? "bg-[var(--white)] text-[var(--black)] border-[var(--white)]"
                   : "bg-[var(--steel)] text-[var(--muted)] hover:text-[var(--white)]"
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >

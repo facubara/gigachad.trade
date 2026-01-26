@@ -13,6 +13,7 @@ export function TippingModule() {
   const [tipStatus, setTipStatus] = useState<TipStatus>("idle");
   const [tipError, setTipError] = useState<string | null>(null);
   const [lastSignature, setLastSignature] = useState<string | null>(null);
+  const [customAmount, setCustomAmount] = useState("");
 
   const handleTip = useCallback(async (amount: number) => {
     if (!isConnected) {
@@ -76,7 +77,7 @@ export function TippingModule() {
       )}
 
       {/* Tip buttons */}
-      <div className="flex gap-4 justify-center mb-6">
+      <div className="flex gap-4 justify-center mb-6 flex-wrap">
         {TIP_AMOUNTS.map((amount) => (
           <motion.button
             key={amount}
@@ -93,6 +94,40 @@ export function TippingModule() {
             )}
           </motion.button>
         ))}
+      </div>
+
+      {/* Custom amount input */}
+      <div className="flex gap-2 justify-center mb-6 max-w-xs mx-auto">
+        <div className="relative flex-1">
+          <input
+            type="number"
+            step="0.01"
+            min="0.01"
+            value={customAmount}
+            onChange={(e) => setCustomAmount(e.target.value)}
+            placeholder="Other"
+            disabled={tipStatus === "pending"}
+            className="w-full px-4 py-3 bg-[var(--bg)] border border-[var(--border)] text-[var(--white)] placeholder:text-[var(--dim)] focus:outline-none focus:border-[var(--white)] font-mono text-[12px] tracking-[0.02em] disabled:opacity-50"
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--dim)] text-[11px]">
+            SOL
+          </span>
+        </div>
+        <motion.button
+          onClick={() => {
+            const amount = parseFloat(customAmount);
+            if (amount > 0) {
+              handleTip(amount);
+              setCustomAmount("");
+            }
+          }}
+          disabled={tipStatus === "pending" || !customAmount || parseFloat(customAmount) <= 0}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="text-[11px] font-medium tracking-[0.15em] uppercase bg-[var(--white)] text-[var(--black)] px-6 py-3 hover:bg-[var(--muted)] hover:text-[var(--white)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Send
+        </motion.button>
       </div>
 
       {/* Connect prompt */}

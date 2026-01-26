@@ -11,37 +11,13 @@ import {
 } from "@solana/web3.js";
 import { DONATION_WALLET_ADDRESS } from "./constants";
 
-// Use mainnet-beta for production
-const SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com";
-
-/**
- * Creates a SOL transfer transaction.
- */
-export async function createTipTransaction(
-  fromPubkey: PublicKey,
-  amountSol: number
-): Promise<Transaction> {
-  const connection = new Connection(SOLANA_RPC_URL, "confirmed");
-  const toPubkey = new PublicKey(DONATION_WALLET_ADDRESS);
-
-  const transaction = new Transaction().add(
-    SystemProgram.transfer({
-      fromPubkey,
-      toPubkey,
-      lamports: Math.floor(amountSol * LAMPORTS_PER_SOL),
-    })
-  );
-
-  // Get recent blockhash
-  const { blockhash } = await connection.getLatestBlockhash();
-  transaction.recentBlockhash = blockhash;
-  transaction.feePayer = fromPubkey;
-
-  return transaction;
-}
+// RPC endpoint - set NEXT_PUBLIC_SOLANA_RPC_URL in .env.local
+// Get a free RPC from https://dev.helius.xyz (100k requests/month free)
+const SOLANA_RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
 
 /**
  * Sends a tip using the Phantom wallet.
+ * Uses Phantom's built-in connection for better reliability.
  */
 export async function sendTip(amountSol: number): Promise<string> {
   const provider = window.phantom?.solana || window.solana;
@@ -54,11 +30,31 @@ export async function sendTip(amountSol: number): Promise<string> {
     throw new Error("Wallet not connected");
   }
 
+  const connection = new Connection(SOLANA_RPC_URL, "confirmed");
   const fromPubkey = new PublicKey(provider.publicKey.toString());
-  const transaction = await createTipTransaction(fromPubkey, amountSol);
+  const toPubkey = new PublicKey(DONATION_WALLET_ADDRESS);
 
-  // Sign and send via Phantom
-  const { signature } = await provider.signAndSendTransaction(transaction);
+  // Get latest blockhash with commitment
+  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+
+  // Create transaction
+  const transaction = new Transaction({
+    blockhash,
+    lastValidBlockHeight,
+    feePayer: fromPubkey,
+  }).add(
+    SystemProgram.transfer({
+      fromPubkey,
+      toPubkey,
+      lamports: Math.floor(amountSol * LAMPORTS_PER_SOL),
+    })
+  );
+
+  // Sign and send via Phantom with skipPreflight to avoid simulation errors
+  const { signature } = await provider.signAndSendTransaction(transaction, {
+    skipPreflight: false,
+    preflightCommitment: "confirmed",
+  });
 
   return signature;
 }

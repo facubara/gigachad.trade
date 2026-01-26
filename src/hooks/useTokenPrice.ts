@@ -8,6 +8,7 @@ interface TokenPriceResponse {
   marketCap: number | null;
   fdv: number | null;
   volume24h: number | null;
+  volumeChange24h: number | null;
   timestamp: number;
   stale?: boolean;
 }
@@ -17,6 +18,7 @@ interface UseTokenPriceResult {
   priceChange24h: number | null;
   marketCap: number | null;
   volume24h: number | null;
+  volumeChange24h: number | null;
   isLoading: boolean;
   isStale: boolean;
   error: string | null;
@@ -30,6 +32,7 @@ export function useTokenPrice(): UseTokenPriceResult {
   const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
   const [marketCap, setMarketCap] = useState<number | null>(null);
   const [volume24h, setVolume24h] = useState<number | null>(null);
+  const [volumeChange24h, setVolumeChange24h] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isStale, setIsStale] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +50,7 @@ export function useTokenPrice(): UseTokenPriceResult {
       setPriceChange24h(data.priceChange24h);
       setMarketCap(data.marketCap);
       setVolume24h(data.volume24h);
+      setVolumeChange24h(data.volumeChange24h);
       setIsStale(data.stale ?? false);
       setError(null);
     } catch (err) {
@@ -63,5 +67,5 @@ export function useTokenPrice(): UseTokenPriceResult {
     return () => clearInterval(interval);
   }, [fetchPrice]);
 
-  return { price, priceChange24h, marketCap, volume24h, isLoading, isStale, error, refetch: fetchPrice };
+  return { price, priceChange24h, marketCap, volume24h, volumeChange24h, isLoading, isStale, error, refetch: fetchPrice };
 }
