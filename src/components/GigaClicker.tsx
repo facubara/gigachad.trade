@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useClickSpeed } from "@/hooks/useClickSpeed";
 
 function formatNumber(num: number): string {
   if (num >= 1_000_000) {
@@ -24,11 +25,86 @@ interface ClickParticle {
 export function GigaClicker() {
   const { player, isLoading, localPushups, addPushups } = usePlayer();
   const [particles, setParticles] = useState<ClickParticle[]>([]);
-  const [isPressed, setIsPressed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoDuration, setVideoDuration] = useState(1);
+
+  // Calculate base rate from pushupsPerSecond
+  // If video is 1 second and we want 1 pushup/sec, playbackRate = 1
+  const pushupsPerSecond = player?.pushupsPerSecond ?? 0;
+  const baseRate = videoDuration > 0 ? videoDuration * pushupsPerSecond : 0;
+
+  const { playbackRate, recordClick, onCycleComplete } = useClickSpeed({
+    baseRate,
+    maxRate: 4,
+  });
+
+  // Minimum playback rate for browsers
+  const MIN_PLAYBACK_RATE = 0.5;
+
+  // Update video playback rate
+  useEffect(() => {
+    if (videoRef.current) {
+      if (playbackRate < MIN_PLAYBACK_RATE) {
+        // Will pause at end of cycle via onEnded
+      } else {
+        const clampedRate = Math.min(Math.max(playbackRate, MIN_PLAYBACK_RATE), 4);
+        videoRef.current.playbackRate = clampedRate;
+        if (videoRef.current.paused) {
+          videoRef.current.play().catch(() => {
+            // Autoplay may be blocked, user interaction will start it
+          });
+        }
+      }
+    }
+  }, [playbackRate]);
+
+  // Get video duration on load
+  const handleLoadedMetadata = useCallback(() => {
+    if (videoRef.current) {
+      setVideoDuration(videoRef.current.duration);
+    }
+  }, []);
+
+  // Handle video loop - called when video reaches the end and loops
+  const handleEnded = useCallback(() => {
+    onCycleComplete();
+
+    // Check if we should pause (playbackRate went to 0)
+    if (playbackRate < MIN_PLAYBACK_RATE && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.pause();
+    }
+  }, [onCycleComplete, playbackRate]);
+
+  // Since loop prevents 'ended' event, we use 'timeupdate' to detect loop
+  const lastTimeRef = useRef(0);
+  const handleTimeUpdate = useCallback(() => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      // Detect when video loops (time jumps back significantly)
+      if (lastTimeRef.current > 0 && currentTime < lastTimeRef.current - 0.5) {
+        onCycleComplete();
+
+        // Check if we should pause after this cycle
+        if (playbackRate < MIN_PLAYBACK_RATE) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.pause();
+        }
+      }
+      lastTimeRef.current = currentTime;
+    }
+  }, [onCycleComplete, playbackRate]);
 
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e: React.MouseEvent<HTMLVideoElement>) => {
       addPushups(1);
+      recordClick();
+
+      // Start video if paused (first click)
+      if (videoRef.current?.paused) {
+        videoRef.current.playbackRate = 1;
+        videoRef.current.play().catch(() => {});
+      }
 
       // Add click particle
       const rect = e.currentTarget.getBoundingClientRect();
@@ -43,7 +119,7 @@ export function GigaClicker() {
         setParticles((prev) => prev.filter((p) => p.id !== id));
       }, 600);
     },
-    [addPushups]
+    [addPushups, recordClick]
   );
 
   if (isLoading) {
@@ -79,20 +155,26 @@ export function GigaClicker() {
         </p>
       </div>
 
-      {/* Click button */}
+      {/* Clickable video */}
       <div className="relative">
-        <motion.button
-          onClick={handleClick}
-          onMouseDown={() => setIsPressed(true)}
-          onMouseUp={() => setIsPressed(false)}
-          onMouseLeave={() => setIsPressed(false)}
-          animate={{
-            scale: isPressed ? 0.95 : 1,
-          }}
+        <motion.div
+          whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="relative w-48 h-48 md:w-56 md:h-56 bg-[var(--white)] text-[var(--black)] font-bold text-2xl md:text-3xl uppercase tracking-[0.2em] hover:bg-[var(--muted)] hover:text-[var(--white)] transition-colors select-none overflow-hidden"
+          className="relative overflow-hidden cursor-pointer"
         >
-          <span className="relative z-10">PUSH</span>
+          <video
+            ref={videoRef}
+            src="/videos/pushup.mp4"
+            loop
+            muted
+            playsInline
+            onClick={handleClick}
+            onLoadedMetadata={handleLoadedMetadata}
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={handleEnded}
+            className="w-[320px] md:w-[500px] h-auto object-contain select-none"
+            style={{ pointerEvents: "auto" }}
+          />
 
           {/* Click particles */}
           <AnimatePresence>
@@ -103,13 +185,14 @@ export function GigaClicker() {
                 animate={{ opacity: 0, scale: 1.5, y: particle.y - 80 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute text-xl font-bold pointer-events-none"
+                className="absolute text-xl font-bold pointer-events-none text-[var(--white)]"
+                style={{ textShadow: "0 0 10px rgba(0,0,0,0.8)" }}
               >
                 +1
               </motion.span>
             ))}
           </AnimatePresence>
-        </motion.button>
+        </motion.div>
       </div>
 
       {/* Perks section placeholder */}

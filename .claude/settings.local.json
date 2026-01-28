@@ -22,7 +22,18 @@
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
       "Bash(taskkill //F //PID 37900)",
-      "mcp__playwright__browser_tabs"
+      "mcp__playwright__browser_tabs",
+      "Bash(npx next dev --turbopack)",
+      "Bash(node:*)",
+      "Bash(npm --version)",
+      "Bash(tree:*)",
+      "Bash(npx tsc:*)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_run_code",
+      "mcp__playwright__browser_close",
+      "Bash(taskkill:*)",
+      "mcp__playwright__browser_resize"
     ]
   }
 }
