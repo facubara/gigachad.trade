@@ -1,63 +1,49 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-// In-memory player store (will be replaced with DB in production)
-// Key: playerId, Value: player data
-const players = new Map<string, {
-  id: string;
-  displayName: string;
-  totalPushups: number;
-  pushupsPerSecond: number;
-  createdAt: number;
-}>();
-
-function generatePlayerId(): string {
-  return crypto.randomUUID();
-}
-
-function generateDisplayName(): string {
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `GIGA#${num}`;
-}
+import { prisma } from "@/lib/db";
+import { generateDisplayName } from "@/lib/playerStore";
 
 export async function POST() {
   const cookieStore = await cookies();
   let playerId = cookieStore.get("player_id")?.value;
 
-  // Check if player already exists
-  if (playerId && players.has(playerId)) {
-    const player = players.get(playerId)!;
-    return NextResponse.json({
-      playerId: player.id,
-      displayName: player.displayName,
-      totalPushups: player.totalPushups,
-      pushupsPerSecond: player.pushupsPerSecond,
+  // Check if player already exists in database
+  if (playerId) {
+    const existingPlayer = await prisma.player.findUnique({
+      where: { id: playerId },
     });
+
+    if (existingPlayer) {
+      return NextResponse.json({
+        playerId: existingPlayer.id,
+        displayName: existingPlayer.displayName,
+        totalPushups: existingPlayer.totalPushups,
+        pushupsPerSecond: existingPlayer.pushupsPerSecond,
+        perks: existingPlayer.perks,
+      });
+    }
   }
 
-  // Create new player
-  playerId = generatePlayerId();
-  const displayName = generateDisplayName();
-
-  const player = {
-    id: playerId,
-    displayName,
-    totalPushups: 0,
-    pushupsPerSecond: 0,
-    createdAt: Date.now(),
-  };
-
-  players.set(playerId, player);
+  // Create new player in database
+  const newPlayer = await prisma.player.create({
+    data: {
+      displayName: generateDisplayName(),
+      totalPushups: 0,
+      pushupsPerSecond: 0,
+      perks: {},
+    },
+  });
 
   const response = NextResponse.json({
-    playerId: player.id,
-    displayName: player.displayName,
-    totalPushups: player.totalPushups,
-    pushupsPerSecond: player.pushupsPerSecond,
+    playerId: newPlayer.id,
+    displayName: newPlayer.displayName,
+    totalPushups: newPlayer.totalPushups,
+    pushupsPerSecond: newPlayer.pushupsPerSecond,
+    perks: newPlayer.perks,
   });
 
   // Set cookie for 30 days
-  response.cookies.set("player_id", playerId, {
+  response.cookies.set("player_id", newPlayer.id, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -66,6 +52,3 @@ export async function POST() {
 
   return response;
 }
-
-// Export players map for use in pushups route
-export { players };

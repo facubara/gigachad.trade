@@ -3,7 +3,9 @@
 import { useCallback, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayer } from "@/hooks/usePlayer";
-import { useClickSpeed } from "@/hooks/useClickSpeed";
+import { usePerks } from "@/hooks/usePerks";
+import { PerkCard } from "@/components/PerkCard";
+import { getPushupsPerClick, calculatePushupsPerSecond } from "@/lib/perks";
 
 function formatNumber(num: number): string {
   if (num >= 1_000_000) {
@@ -20,90 +22,86 @@ interface ClickParticle {
   id: number;
   x: number;
   y: number;
+  amount: number;
 }
 
+// How recently user must have clicked for animation to continue
+const CLICK_TIMEOUT_MS = 300;
+
 export function GigaClicker() {
-  const { player, isLoading, localPushups, addPushups } = usePlayer();
+  const { player, isLoading, localPushups, addPushups, perks, setLocalPushups, setPerks } = usePlayer();
   const [particles, setParticles] = useState<ClickParticle[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoDuration, setVideoDuration] = useState(1);
+  const isPlaying = useRef(false);
+  const lastClickTime = useRef(0);
 
-  // Calculate base rate from pushupsPerSecond
-  // If video is 1 second and we want 1 pushup/sec, playbackRate = 1
-  const pushupsPerSecond = player?.pushupsPerSecond ?? 0;
-  const baseRate = videoDuration > 0 ? videoDuration * pushupsPerSecond : 0;
-
-  const { playbackRate, recordClick, onCycleComplete } = useClickSpeed({
-    baseRate,
-    maxRate: 4,
+  const {
+    perks: perkDefinitions,
+    perkLevels,
+    setPerkLevels,
+    purchasePerk,
+    getPerkCost,
+    getPerkLevel,
+    pushupsPerClick,
+    pushupsPerSecond,
+    isPurchasing,
+  } = usePerks({
+    localPushups,
+    onPurchaseSuccess: (newTotal, newPerks) => {
+      setLocalPushups(newTotal);
+      setPerks(newPerks);
+    },
   });
 
-  // Minimum playback rate for browsers
-  const MIN_PLAYBACK_RATE = 0.5;
+  // Sync perk levels from player data
+  const perksRef = useRef(perks);
+  if (perks !== perksRef.current) {
+    perksRef.current = perks;
+    setPerkLevels(perks);
+  }
 
-  // Update video playback rate
-  useEffect(() => {
+  // Play the pushup animation
+  const playPushup = useCallback(() => {
     if (videoRef.current) {
-      if (playbackRate < MIN_PLAYBACK_RATE) {
-        // Will pause at end of cycle via onEnded
-      } else {
-        const clampedRate = Math.min(Math.max(playbackRate, MIN_PLAYBACK_RATE), 4);
-        videoRef.current.playbackRate = clampedRate;
-        if (videoRef.current.paused) {
-          videoRef.current.play().catch(() => {
-            // Autoplay may be blocked, user interaction will start it
-          });
-        }
-      }
-    }
-  }, [playbackRate]);
-
-  // Get video duration on load
-  const handleLoadedMetadata = useCallback(() => {
-    if (videoRef.current) {
-      setVideoDuration(videoRef.current.duration);
+      isPlaying.current = true;
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
     }
   }, []);
 
-  // Handle video loop - called when video reaches the end and loops
+  // Calculate actual pushups per second from perks
+  const currentPushupsPerSecond = calculatePushupsPerSecond(perks);
+
+  // Handle video ended - continue if user clicked recently OR if auto perks are active
   const handleEnded = useCallback(() => {
-    onCycleComplete();
-
-    // Check if we should pause (playbackRate went to 0)
-    if (playbackRate < MIN_PLAYBACK_RATE && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.pause();
+    const timeSinceLastClick = Date.now() - lastClickTime.current;
+    if (timeSinceLastClick < CLICK_TIMEOUT_MS || currentPushupsPerSecond > 0) {
+      // Continue playing - either user is clicking or auto perks are active
+      playPushup();
+    } else {
+      // User stopped clicking and no auto perks, stop animation
+      isPlaying.current = false;
     }
-  }, [onCycleComplete, playbackRate]);
+  }, [playPushup, currentPushupsPerSecond]);
 
-  // Since loop prevents 'ended' event, we use 'timeupdate' to detect loop
-  const lastTimeRef = useRef(0);
-  const handleTimeUpdate = useCallback(() => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      // Detect when video loops (time jumps back significantly)
-      if (lastTimeRef.current > 0 && currentTime < lastTimeRef.current - 0.5) {
-        onCycleComplete();
-
-        // Check if we should pause after this cycle
-        if (playbackRate < MIN_PLAYBACK_RATE) {
-          videoRef.current.currentTime = 0;
-          videoRef.current.pause();
-        }
-      }
-      lastTimeRef.current = currentTime;
+  // Start auto-animation when pushupsPerSecond > 0
+  useEffect(() => {
+    if (currentPushupsPerSecond > 0 && !isPlaying.current && videoRef.current) {
+      playPushup();
     }
-  }, [onCycleComplete, playbackRate]);
+  }, [currentPushupsPerSecond, playPushup]);
+
+  // Calculate current pushups per click from perks
+  const currentPushupsPerClick = getPushupsPerClick(perks);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLVideoElement>) => {
-      addPushups(1);
-      recordClick();
+      addPushups(currentPushupsPerClick);
+      lastClickTime.current = Date.now();
 
-      // Start video if paused (first click)
-      if (videoRef.current?.paused) {
-        videoRef.current.playbackRate = 1;
-        videoRef.current.play().catch(() => {});
+      // Start playing if not already
+      if (!isPlaying.current) {
+        playPushup();
       }
 
       // Add click particle
@@ -112,14 +110,14 @@ export function GigaClicker() {
       const y = e.clientY - rect.top;
       const id = Date.now() + Math.random();
 
-      setParticles((prev) => [...prev, { id, x, y }]);
+      setParticles((prev) => [...prev, { id, x, y, amount: currentPushupsPerClick }]);
 
       // Remove particle after animation
       setTimeout(() => {
         setParticles((prev) => prev.filter((p) => p.id !== id));
       }, 600);
     },
-    [addPushups, recordClick]
+    [addPushups, playPushup, currentPushupsPerClick, perks]
   );
 
   if (isLoading) {
@@ -164,13 +162,10 @@ export function GigaClicker() {
         >
           <video
             ref={videoRef}
-            src="/videos/pushup.mp4"
-            loop
+            src="/videos/onepushup.mp4"
             muted
             playsInline
             onClick={handleClick}
-            onLoadedMetadata={handleLoadedMetadata}
-            onTimeUpdate={handleTimeUpdate}
             onEnded={handleEnded}
             className="w-[320px] md:w-[500px] h-auto object-contain select-none"
             style={{ pointerEvents: "auto" }}
@@ -188,30 +183,63 @@ export function GigaClicker() {
                 className="absolute text-xl font-bold pointer-events-none text-[var(--white)]"
                 style={{ textShadow: "0 0 10px rgba(0,0,0,0.8)" }}
               >
-                +1
+                +{particle.amount}
               </motion.span>
             ))}
           </AnimatePresence>
         </motion.div>
       </div>
 
-      {/* Perks section placeholder */}
-      <div className="mt-20 w-full max-w-lg px-6">
-        <p className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em] text-center mb-6">
-          Perks
+      {/* Stats */}
+      <div className="mt-8 flex gap-8 text-center">
+        <div>
+          <p className="text-[20px] font-bold">{currentPushupsPerClick}</p>
+          <p className="text-[9px] text-[var(--dim)] uppercase tracking-[0.1em]">per click</p>
+        </div>
+        {pushupsPerSecond > 0 && (
+          <div>
+            <p className="text-[20px] font-bold text-green-400">{pushupsPerSecond}</p>
+            <p className="text-[9px] text-[var(--dim)] uppercase tracking-[0.1em]">per second</p>
+          </div>
+        )}
+      </div>
+
+      {/* Perks section */}
+      <div className="mt-16 w-full max-w-2xl px-6">
+        {/* Multiplier perks */}
+        <p className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em] text-center mb-4">
+          Multipliers
         </p>
-        <div className="grid grid-cols-2 gap-px bg-[var(--border)]">
-          {["Protein Powder", "Creatine", "Gym Membership", "Personal Trainer"].map(
-            (perk) => (
-              <div
-                key={perk}
-                className="p-5 bg-[var(--steel)] opacity-50 cursor-not-allowed"
-              >
-                <p className="font-medium text-[11px] tracking-[0.05em]">{perk}</p>
-                <p className="text-[9px] text-[var(--dim)] mt-1 tracking-[0.1em] uppercase">Coming soon</p>
-              </div>
-            )
-          )}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--border)] mb-8">
+          {perkDefinitions.filter(p => p.effectType === 'multiplier').map((perk) => (
+            <PerkCard
+              key={perk.id}
+              perk={perk}
+              level={getPerkLevel(perk.id)}
+              cost={getPerkCost(perk.id)}
+              canAfford={localPushups >= getPerkCost(perk.id)}
+              isPurchasing={isPurchasing === perk.id}
+              onPurchase={() => purchasePerk(perk.id)}
+            />
+          ))}
+        </div>
+
+        {/* Auto perks */}
+        <p className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em] text-center mb-4">
+          Auto-Pushups
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--border)]">
+          {perkDefinitions.filter(p => p.effectType === 'auto').map((perk) => (
+            <PerkCard
+              key={perk.id}
+              perk={perk}
+              level={getPerkLevel(perk.id)}
+              cost={getPerkCost(perk.id)}
+              canAfford={localPushups >= getPerkCost(perk.id)}
+              isPurchasing={isPurchasing === perk.id}
+              onPurchase={() => purchasePerk(perk.id)}
+            />
+          ))}
         </div>
       </div>
     </div>

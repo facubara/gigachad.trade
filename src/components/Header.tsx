@@ -8,6 +8,7 @@ import { usePhantom } from "@/hooks/usePhantom";
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/clicker", label: "Game" },
+  { href: "/leaderboard", label: "Leaderboard" },
   { href: "/calculator", label: "Calculator" },
 ] as const;
 
@@ -103,6 +104,7 @@ export function Header() {
               >
                 {item.label === "Home" && "Home"}
                 {item.label === "Game" && "Game"}
+                {item.label === "Leaderboard" && "Ranks"}
                 {item.label === "Calculator" && "Calc"}
               </Link>
             );

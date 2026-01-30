@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-// In-memory player store (shared stub - will be replaced with DB)
-const players = new Map<string, {
-  id: string;
-  displayName: string;
-  totalPushups: number;
-  pushupsPerSecond: number;
-  createdAt: number;
-}>();
+import { prisma } from "@/lib/db";
+import { generateDisplayName } from "@/lib/playerStore";
 
 interface PushupRequest {
   delta: number;
@@ -48,21 +41,33 @@ export async function POST(request: NextRequest) {
   // Cap delta to prevent obvious abuse (max 100 per request)
   const cappedDelta = Math.min(delta, 100);
 
-  // Get or create player (in case of memory loss between requests in dev)
-  let player = players.get(playerId);
-  if (!player) {
-    player = {
-      id: playerId,
-      displayName: `GIGA#${Math.floor(1000 + Math.random() * 9000)}`,
-      totalPushups: 0,
-      pushupsPerSecond: 0,
-      createdAt: Date.now(),
-    };
-    players.set(playerId, player);
-  }
+  // Get or create player in database
+  let player = await prisma.player.findUnique({
+    where: { id: playerId },
+  });
 
-  // Update pushups
-  player.totalPushups += cappedDelta;
+  if (!player) {
+    // Create player if doesn't exist (edge case - cookie exists but player was deleted)
+    player = await prisma.player.create({
+      data: {
+        id: playerId,
+        displayName: generateDisplayName(),
+        totalPushups: cappedDelta,
+        pushupsPerSecond: 0,
+        perks: {},
+      },
+    });
+  } else {
+    // Update pushups in database
+    player = await prisma.player.update({
+      where: { id: playerId },
+      data: {
+        totalPushups: {
+          increment: cappedDelta,
+        },
+      },
+    });
+  }
 
   return NextResponse.json({
     totalPushups: player.totalPushups,

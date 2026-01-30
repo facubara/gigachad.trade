@@ -33,7 +33,8 @@
       "mcp__playwright__browser_run_code",
       "mcp__playwright__browser_close",
       "Bash(taskkill:*)",
-      "mcp__playwright__browser_resize"
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_network_requests"
     ]
   }
 }

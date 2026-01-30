@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { calculatePushupsPerSecond } from "@/lib/perks";
 
 interface PlayerData {
   playerId: string;
   displayName: string;
   totalPushups: number;
   pushupsPerSecond: number;
+  perks: Record<string, number>;
 }
 
 interface UsePlayerResult {
@@ -15,6 +17,9 @@ interface UsePlayerResult {
   error: string | null;
   addPushups: (count: number) => void;
   localPushups: number;
+  perks: Record<string, number>;
+  setLocalPushups: (value: number | ((prev: number) => number)) => void;
+  setPerks: (perks: Record<string, number>) => void;
 }
 
 // Batch pushup updates to reduce API calls
@@ -25,10 +30,12 @@ export function usePlayer(): UsePlayerResult {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [localPushups, setLocalPushups] = useState(0);
+  const [perks, setPerks] = useState<Record<string, number>>({});
 
   // Pending pushups to sync with server
   const pendingPushups = useRef(0);
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize player
   useEffect(() => {
@@ -45,6 +52,7 @@ export function usePlayer(): UsePlayerResult {
         const data: PlayerData = await response.json();
         setPlayer(data);
         setLocalPushups(data.totalPushups);
+        setPerks(data.perks || {});
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -96,6 +104,9 @@ export function usePlayer(): UsePlayerResult {
       if (syncTimeoutRef.current) {
         clearTimeout(syncTimeoutRef.current);
       }
+      if (autoIntervalRef.current) {
+        clearInterval(autoIntervalRef.current);
+      }
       // Final sync on unmount
       syncPushups();
     };
@@ -116,11 +127,38 @@ export function usePlayer(): UsePlayerResult {
     }
   }, [syncPushups]);
 
+  // Auto-pushups from perks (passive generation)
+  useEffect(() => {
+    const pps = calculatePushupsPerSecond(perks);
+
+    // Clear existing interval
+    if (autoIntervalRef.current) {
+      clearInterval(autoIntervalRef.current);
+      autoIntervalRef.current = null;
+    }
+
+    // Set up new interval if we have auto perks
+    if (pps > 0) {
+      autoIntervalRef.current = setInterval(() => {
+        addPushups(pps);
+      }, 1000);
+    }
+
+    return () => {
+      if (autoIntervalRef.current) {
+        clearInterval(autoIntervalRef.current);
+      }
+    };
+  }, [perks, addPushups]);
+
   return {
     player,
     isLoading,
     error,
     addPushups,
     localPushups,
+    perks,
+    setLocalPushups,
+    setPerks,
   };
 }

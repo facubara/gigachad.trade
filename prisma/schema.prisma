@@ -1,0 +1,45 @@
+// Prisma schema for GIGACHAD leaderboard
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Player data persisted in database
+model Player {
+  id              String   @id @default(uuid())
+  displayName     String
+  totalPushups    Int      @default(0)
+  pushupsPerSecond Int     @default(0)
+  perks           Json     @default("{}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([totalPushups(sort: Desc)])
+}
+
+// Cached leaderboard snapshot (refreshed every 24h)
+model LeaderboardEntry {
+  id               Int      @id @default(autoincrement())
+  rank             Int
+  playerId         String
+  displayName      String
+  totalPushups     Int
+  pushupsPerSecond Int
+  snapshotId       String   // Groups entries by snapshot
+  createdAt        DateTime @default(now())
+
+  @@index([snapshotId, rank])
+}
+
+// Tracks leaderboard refresh metadata
+model LeaderboardMeta {
+  id            String   @id @default("current")
+  snapshotId    String   @unique
+  lastRefreshed DateTime
+  totalPlayers  Int
+}
