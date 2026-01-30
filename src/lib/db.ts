@@ -18,6 +18,9 @@ function createPrismaClient() {
       max: 1, // Single connection for serverless
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
+      ssl: {
+        rejectUnauthorized: false, // Required for Supabase
+      },
     });
   }
 
