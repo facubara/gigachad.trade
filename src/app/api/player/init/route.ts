@@ -3,8 +3,23 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 import { generateDisplayName } from "@/lib/playerStore";
 
+// Debug endpoint - remove after fixing
+export async function GET() {
+  const dbUrl = process.env.DATABASE_URL || "NOT_SET";
+  const debugUrl = dbUrl.replace(/:([^@]+)@/, ":****@");
+  return NextResponse.json({
+    databaseUrl: debugUrl,
+    nodeEnv: process.env.NODE_ENV
+  });
+}
+
 export async function POST() {
   try {
+    // Debug: check DATABASE_URL format (hide password)
+    const dbUrl = process.env.DATABASE_URL || "NOT_SET";
+    const debugUrl = dbUrl.replace(/:([^@]+)@/, ":****@");
+    console.log("DATABASE_URL format:", debugUrl);
+
     const cookieStore = await cookies();
     let playerId = cookieStore.get("player_id")?.value;
 
