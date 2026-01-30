@@ -50,10 +50,9 @@ export async function sendTip(amountSol: number): Promise<string> {
     })
   );
 
-  // Sign and send via Phantom with skipPreflight to avoid simulation errors
+  // Sign and send via Phantom
   const { signature } = await provider.signAndSendTransaction(transaction, {
     skipPreflight: false,
-    preflightCommitment: "confirmed",
   });
 
   return signature;

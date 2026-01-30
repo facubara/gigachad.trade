@@ -43,7 +43,7 @@ export function PriceDisplay({ price, isLoading, marketCap, progress }: PriceDis
     },
     {
       label: "Market Cap",
-      value: marketCap !== null ? formatMarketCap(marketCap) : "—",
+      value: marketCap != null ? formatMarketCap(marketCap) : "—",
     },
     {
       label: "Progress",
