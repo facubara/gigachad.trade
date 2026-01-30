@@ -292,9 +292,9 @@ export function CalculatorDashboard() {
                     (currentPage - 1) * TRANSACTIONS_PER_PAGE,
                     currentPage * TRANSACTIONS_PER_PAGE
                   )
-                  .map((tx) => (
+                  .map((tx, index) => (
                     <tr
-                      key={tx.signature}
+                      key={`${tx.signature}-${index}`}
                       className="border-b border-[var(--border)] hover:bg-[var(--border)]/30"
                     >
                       <td className="py-3 px-4">

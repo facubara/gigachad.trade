@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { LoadingState } from "@/types/cache";
 
 interface HoldingsDisplayProps {
@@ -12,9 +13,22 @@ interface HoldingsDisplayProps {
   loadingState?: LoadingState;
 }
 
+const ASCII_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
 function LoadingSpinner() {
+  const [frame, setFrame] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFrame((prev) => (prev + 1) % ASCII_FRAMES.length);
+    }, 80);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="w-4 h-4 border border-[var(--white)] border-t-transparent animate-spin" />
+    <span className="text-[var(--white)] text-2xl font-mono">
+      {ASCII_FRAMES[frame]}
+    </span>
   );
 }
 
