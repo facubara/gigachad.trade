@@ -8,12 +8,6 @@ import { PerkCard } from "@/components/PerkCard";
 import { getPushupsPerClick, calculatePushupsPerSecond } from "@/lib/perks";
 
 function formatNumber(num: number): string {
-  if (num >= 1_000_000) {
-    return `${(num / 1_000_000).toFixed(2)}M`;
-  }
-  if (num >= 1_000) {
-    return `${(num / 1_000).toFixed(1)}K`;
-  }
   return num.toLocaleString();
 }
 
@@ -29,8 +23,12 @@ interface ClickParticle {
 const CLICK_TIMEOUT_MS = 300;
 
 export function GigaClicker() {
-  const { player, isLoading, localPushups, addPushups, perks, setLocalPushups, setPerks } = usePlayer();
+  const { player, isLoading, localPushups, addPushups, perks, setLocalPushups, setPerks, updateDisplayName } = usePlayer();
   const [particles, setParticles] = useState<ClickParticle[]>([]);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isPlaying = useRef(false);
   const lastClickTime = useRef(0);
@@ -94,6 +92,38 @@ export function GigaClicker() {
   // Calculate current pushups per click from perks
   const currentPushupsPerClick = getPushupsPerClick(perks);
 
+  // Handle name editing
+  const startEditingName = useCallback(() => {
+    setNameInput(player?.displayName ?? "");
+    setNameError(null);
+    setIsEditingName(true);
+    setTimeout(() => nameInputRef.current?.focus(), 0);
+  }, [player?.displayName]);
+
+  const cancelEditingName = useCallback(() => {
+    setIsEditingName(false);
+    setNameError(null);
+  }, []);
+
+  const saveName = useCallback(async () => {
+    const trimmed = nameInput.trim();
+    if (trimmed.length < 1 || trimmed.length > 20) {
+      setNameError("Name must be 1-20 characters");
+      return;
+    }
+    if (!/^[a-zA-Z0-9_\- ]+$/.test(trimmed)) {
+      setNameError("Letters, numbers, spaces, _ and - only");
+      return;
+    }
+    const success = await updateDisplayName(trimmed);
+    if (success) {
+      setIsEditingName(false);
+      setNameError(null);
+    } else {
+      setNameError("Failed to save name");
+    }
+  }, [nameInput, updateDisplayName]);
+
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLVideoElement>) => {
       addPushups(currentPushupsPerClick);
@@ -133,9 +163,48 @@ export function GigaClicker() {
     <div className="flex flex-col items-center">
       {/* Player info */}
       <div className="text-center mb-8">
-        <p className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em]">
-          {player?.displayName ?? "Unknown"}
-        </p>
+        {isEditingName ? (
+          <div className="flex flex-col items-center gap-2">
+            <input
+              ref={nameInputRef}
+              type="text"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveName();
+                if (e.key === "Escape") cancelEditingName();
+              }}
+              maxLength={20}
+              className="bg-[var(--steel)] border border-[var(--border)] px-3 py-1 text-[12px] text-center uppercase tracking-[0.1em] w-48 focus:outline-none focus:border-[var(--purple)]"
+              placeholder="Enter name"
+            />
+            {nameError && (
+              <p className="text-[9px] text-[var(--negative)]">{nameError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={saveName}
+                className="text-[9px] px-3 py-1 bg-[var(--purple)] hover:opacity-80 uppercase tracking-[0.1em]"
+              >
+                Save
+              </button>
+              <button
+                onClick={cancelEditingName}
+                className="text-[9px] px-3 py-1 bg-[var(--steel)] hover:bg-[var(--charcoal)] uppercase tracking-[0.1em]"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={startEditingName}
+            className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em] hover:text-[var(--white)] transition-colors cursor-pointer"
+            title="Click to change name"
+          >
+            {player?.displayName ?? "Unknown"}
+          </button>
+        )}
       </div>
 
       {/* Push-up counter */}

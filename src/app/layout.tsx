@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "GIGACHAD | The Path to $1B",
   description: "Track the GIGACHAD token journey to $1 billion market cap.",
   keywords: ["GIGACHAD", "Solana", "meme coin", "crypto"],
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   openGraph: {
     title: "GIGACHAD | The Path to $1B",
     description: "Track the GIGACHAD token journey to $1 billion market cap.",

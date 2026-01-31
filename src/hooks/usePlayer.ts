@@ -20,6 +20,7 @@ interface UsePlayerResult {
   perks: Record<string, number>;
   setLocalPushups: (value: number | ((prev: number) => number)) => void;
   setPerks: (perks: Record<string, number>) => void;
+  updateDisplayName: (name: string) => Promise<boolean>;
 }
 
 // Batch pushup updates to reduce API calls
@@ -151,6 +152,30 @@ export function usePlayer(): UsePlayerResult {
     };
   }, [perks, addPushups]);
 
+  // Update display name
+  const updateDisplayName = useCallback(async (name: string): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/player/name", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ displayName: name }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPlayer((prev) =>
+          prev ? { ...prev, displayName: data.displayName } : null
+        );
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }, []);
+
   return {
     player,
     isLoading,
@@ -160,5 +185,6 @@ export function usePlayer(): UsePlayerResult {
     perks,
     setLocalPushups,
     setPerks,
+    updateDisplayName,
   };
 }

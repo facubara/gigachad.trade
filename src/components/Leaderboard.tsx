@@ -106,8 +106,8 @@ export function Leaderboard() {
 
     fetchLeaderboard();
 
-    // Refresh display every minute to update time displays
-    const interval = setInterval(fetchLeaderboard, 60000);
+    // Refresh leaderboard every 30 minutes
+    const interval = setInterval(fetchLeaderboard, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
