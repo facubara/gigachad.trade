@@ -130,6 +130,159 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Holdings share (from calculator holdings section)
+  if (type === "holdings") {
+    const currentValue = searchParams.get("currentValue");
+    const avgEntry = searchParams.get("avgEntry");
+    const buyCount = searchParams.get("buyCount");
+    const priceChange = searchParams.get("priceChange");
+    const priceChangeNum = priceChange ? parseFloat(priceChange) : null;
+    const isPositive = priceChangeNum !== null && priceChangeNum >= 0;
+
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#0a0a0a",
+            fontFamily: "system-ui, sans-serif",
+          }}
+        >
+          {/* Background gradient accent */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "4px",
+              background: "linear-gradient(90deg, #a855f7, #6366f1)",
+              display: "flex",
+            }}
+          />
+
+          {/* Main content */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "20px",
+                color: "#666",
+                letterSpacing: "0.1em",
+                fontFamily: "monospace",
+                display: "flex",
+              }}
+            >
+              {address || ""}
+            </div>
+
+            <div
+              style={{
+                fontSize: "28px",
+                color: "#666",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                marginTop: "16px",
+                display: "flex",
+              }}
+            >
+              My GIGA Holdings
+            </div>
+
+            <div
+              style={{
+                fontSize: "100px",
+                fontWeight: "bold",
+                color: "#fff",
+                letterSpacing: "-0.02em",
+                marginTop: "20px",
+                display: "flex",
+              }}
+            >
+              {holdings || "0"} GIGA
+            </div>
+
+            {currentValue && (
+              <div
+                style={{
+                  fontSize: "36px",
+                  color: "#888",
+                  marginTop: "12px",
+                  display: "flex",
+                }}
+              >
+                ${currentValue}
+              </div>
+            )}
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "32px",
+                marginTop: "24px",
+              }}
+            >
+              {priceChangeNum !== null && (
+                <div
+                  style={{
+                    fontSize: "28px",
+                    color: isPositive ? "#22c55e" : "#ef4444",
+                    fontWeight: "bold",
+                    display: "flex",
+                  }}
+                >
+                  {isPositive ? "+" : ""}{priceChange}% from entry
+                </div>
+              )}
+              {buyCount && (
+                <div
+                  style={{
+                    fontSize: "24px",
+                    color: "#666",
+                    display: "flex",
+                  }}
+                >
+                  {buyCount} buy txns
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "40px",
+              display: "flex",
+              alignItems: "center",
+              fontSize: "24px",
+              color: "#666",
+            }}
+          >
+            <span style={{ color: "#a855f7", fontWeight: "bold", display: "flex" }}>$GIGA</span>
+            <span style={{ marginLeft: "24px", marginRight: "24px", display: "flex" }}>•</span>
+            <span style={{ display: "flex" }}>gigachad.trade</span>
+          </div>
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 630,
+      }
+    );
+  }
+
   // Portfolio share (from calculator)
   if (type === "portfolio") {
     const entryMultiplier = searchParams.get("entryMultiplier");

@@ -11,6 +11,11 @@ interface SharePageProps {
     targetValue?: string;
     targetMarketCap?: string;
     currentMultiplier?: string;
+    // Holdings type params
+    currentValue?: string;
+    avgEntry?: string;
+    buyCount?: string;
+    priceChange?: string;
   }>;
 }
 
@@ -45,6 +50,10 @@ export async function generateMetadata({ searchParams }: SharePageProps): Promis
   if (params.targetValue) ogParams.set("targetValue", params.targetValue);
   if (params.targetMarketCap) ogParams.set("targetMarketCap", params.targetMarketCap);
   if (params.currentMultiplier) ogParams.set("currentMultiplier", params.currentMultiplier);
+  if (params.currentValue) ogParams.set("currentValue", params.currentValue);
+  if (params.avgEntry) ogParams.set("avgEntry", params.avgEntry);
+  if (params.buyCount) ogParams.set("buyCount", params.buyCount);
+  if (params.priceChange) ogParams.set("priceChange", params.priceChange);
 
   const ogImageUrl = `/api/og?${ogParams.toString()}`;
 
@@ -63,6 +72,11 @@ export async function generateMetadata({ searchParams }: SharePageProps): Promis
       title = `Holding ${params.holdings} $GIGA`;
       description = "Calculate your potential gains at gigachad.trade";
     }
+  } else if (type === "holdings" && params.holdings) {
+    const valueText = params.currentValue ? ` ($${params.currentValue})` : "";
+    title = `Holding ${params.holdings} $GIGA${valueText}`;
+    const changeText = params.priceChange ? `${parseFloat(params.priceChange) >= 0 ? "+" : ""}${params.priceChange}% from entry. ` : "";
+    description = `${changeText}Check your $GIGA holdings at gigachad.trade`;
   }
 
   return {
@@ -94,7 +108,7 @@ export async function generateMetadata({ searchParams }: SharePageProps): Promis
 export default async function SharePage({ searchParams }: SharePageProps) {
   const params = await searchParams;
   // Redirect to appropriate page based on type
-  if (params.type === "portfolio") {
+  if (params.type === "portfolio" || params.type === "holdings") {
     redirect("/calculator");
   }
   redirect("/");

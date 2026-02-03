@@ -179,6 +179,7 @@ export function CalculatorDashboard() {
             currentPrice={currentPrice}
             currentValue={currentValue}
             buyCount={analysis?.transactions.filter((tx) => tx.type === "buy").length ?? null}
+            address={analysis?.address}
             isLoading={isLoading || isPriceLoading}
             loadingState={loadingState}
           />
@@ -196,6 +197,7 @@ export function CalculatorDashboard() {
               currentPrice={currentPrice}
               currentValue={currentValue}
               buyCount={analysis?.transactions.filter((tx) => tx.type === "buy").length ?? null}
+              address={analysis?.address}
               isLoading={isLoading || isPriceLoading}
               loadingState={loadingState}
             />

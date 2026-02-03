@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 interface ShareButtonProps {
-  type: "general" | "portfolio";
+  type: "general" | "portfolio" | "holdings";
   // General stats
   multiplier?: number;
   progress?: number;
@@ -14,6 +14,11 @@ interface ShareButtonProps {
   targetMarketCap?: number;
   entryMultiplier?: number;
   currentMultiplier?: number;
+  // Holdings stats
+  currentValue?: string;
+  avgEntry?: string;
+  buyCount?: number;
+  priceChange?: number;
   className?: string;
 }
 
@@ -27,6 +32,10 @@ export function ShareButton({
   targetMarketCap,
   entryMultiplier,
   currentMultiplier,
+  currentValue,
+  avgEntry,
+  buyCount,
+  priceChange,
   className = "",
 }: ShareButtonProps) {
   const [isSharing, setIsSharing] = useState(false);
@@ -65,6 +74,14 @@ export function ShareButton({
       return `I'm holding ${holdings} $GIGA 💎\n\nCalculate your gains:`;
     }
 
+    if (type === "holdings" && holdings) {
+      const changeText = priceChange !== undefined
+        ? `${priceChange >= 0 ? "+" : ""}${priceChange.toFixed(1)}% from entry`
+        : "";
+      const valueText = currentValue ? ` ($${currentValue})` : "";
+      return `I'm holding ${holdings} $GIGA${valueText} 💎\n\n${changeText ? `${changeText} 📈\n` : ""}${buyCount ? `${buyCount} buy transactions` : ""}\n\nCheck yours:`;
+    }
+
     return `Check out $GIGA - The path to ${mcapDisplay} 🚀`;
   };
 
@@ -84,6 +101,13 @@ export function ShareButton({
       if (targetMarketCap) params.set("targetMarketCap", targetMarketCap.toString());
       if (entryMultiplier) params.set("multiplier", entryMultiplier.toFixed(1));
       if (currentMultiplier) params.set("currentMultiplier", currentMultiplier.toFixed(1));
+    } else if (type === "holdings") {
+      if (address) params.set("address", truncateAddress(address));
+      if (holdings) params.set("holdings", holdings);
+      if (currentValue) params.set("currentValue", currentValue);
+      if (avgEntry) params.set("avgEntry", avgEntry);
+      if (buyCount) params.set("buyCount", buyCount.toString());
+      if (priceChange !== undefined) params.set("priceChange", priceChange.toFixed(1));
     }
 
     return `${baseUrl}/share?${params.toString()}`;

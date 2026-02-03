@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { LoadingState } from "@/types/cache";
+import { ShareButton } from "@/components/ShareButton";
 
 interface HoldingsDisplayProps {
   balance: number | null;
@@ -9,6 +10,7 @@ interface HoldingsDisplayProps {
   currentPrice: number | null;
   currentValue: number | null;
   buyCount: number | null;
+  address?: string | null;
   isLoading?: boolean;
   loadingState?: LoadingState;
 }
@@ -90,6 +92,7 @@ export function HoldingsDisplay({
   currentPrice,
   currentValue,
   buyCount,
+  address,
   isLoading = false,
   loadingState,
 }: HoldingsDisplayProps) {
@@ -174,6 +177,21 @@ export function HoldingsDisplay({
           </div>
         )}
       </div>
+
+      {/* Share button */}
+      <div className="pt-2">
+        <ShareButton
+          type="holdings"
+          address={address || undefined}
+          holdings={formatNumber(balance)}
+          currentValue={currentValue !== null ? formatShareCurrency(currentValue) : undefined}
+          avgEntry={entryPrice !== null && entryPrice > 0 ? formatSmallPrice(entryPrice) : undefined}
+          buyCount={buyCount !== null ? buyCount : undefined}
+          priceChange={entryPrice !== null && entryPrice > 0 && currentPrice !== null
+            ? ((currentPrice - entryPrice) / entryPrice) * 100
+            : undefined}
+        />
+      </div>
     </div>
   );
 }
@@ -219,6 +237,16 @@ function formatCurrency(num: number): string {
     return `$${(num / 1_000).toFixed(2)}K`;
   }
   return `$${num.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+}
+
+function formatShareCurrency(num: number): string {
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(2)}K`;
+  }
+  return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
 function formatSmallPrice(price: number): string {
