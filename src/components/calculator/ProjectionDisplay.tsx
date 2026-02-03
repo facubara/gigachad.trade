@@ -110,6 +110,7 @@ export function ProjectionDisplay({
           type="portfolio"
           address={address || undefined}
           targetValue={formatShareValue(projection.valueAtTarget)}
+          targetMarketCap={projection.targetMarketCap}
           entryMultiplier={projection.multiplierFromEntry}
           currentMultiplier={projection.multiplierFromCurrent}
           holdings={balance ? formatShareHoldings(balance) : undefined}

@@ -208,7 +208,7 @@ export function GigaClicker() {
       </div>
 
       {/* Push-up counter */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-6">
         <motion.p
           key={localPushups}
           initial={{ scale: 1.1 }}
@@ -274,7 +274,7 @@ export function GigaClicker() {
       </div>
 
       {/* Perks section */}
-      <div className="mt-16 w-full max-w-2xl px-6">
+      <div className="mt-6 w-full max-w-2xl px-6">
         {/* Multiplier perks */}
         <p className="text-[10px] text-[var(--dim)] uppercase tracking-[0.2em] text-center mb-4">
           Multipliers

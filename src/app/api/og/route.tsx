@@ -3,15 +3,33 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+function formatMarketCapDisplay(mcapStr: string | null): string {
+  if (!mcapStr) return "$1B";
+  const mcap = parseFloat(mcapStr);
+  if (isNaN(mcap)) return "$1B";
+  if (mcap >= 1_000_000_000_000) {
+    return `$${(mcap / 1_000_000_000_000).toFixed(mcap % 1_000_000_000_000 === 0 ? 0 : 1)}T`;
+  }
+  if (mcap >= 1_000_000_000) {
+    return `$${(mcap / 1_000_000_000).toFixed(mcap % 1_000_000_000 === 0 ? 0 : 1)}B`;
+  }
+  if (mcap >= 1_000_000) {
+    return `$${(mcap / 1_000_000).toFixed(mcap % 1_000_000 === 0 ? 0 : 0)}M`;
+  }
+  return `$${mcap.toLocaleString()}`;
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type") || "general";
   const multiplier = searchParams.get("multiplier");
   const targetValue = searchParams.get("targetValue");
+  const targetMarketCap = searchParams.get("targetMarketCap");
   const holdings = searchParams.get("holdings");
   const address = searchParams.get("address");
   const currentMultiplier = searchParams.get("currentMultiplier");
   const progress = searchParams.get("progress");
+  const mcapDisplay = formatMarketCapDisplay(targetMarketCap);
 
   // General stats share (from home page)
   if (type === "general") {
@@ -59,7 +77,7 @@ export async function GET(request: NextRequest) {
                 display: "flex",
               }}
             >
-              Multiplier to $1B
+              Multiplier to {mcapDisplay}
             </div>
 
             <div
@@ -84,7 +102,7 @@ export async function GET(request: NextRequest) {
                 marginTop: "24px",
               }}
             >
-              {progress ? `${progress}% to $1B Market Cap` : ""}
+              {progress ? `${progress}% to ${mcapDisplay} Market Cap` : ""}
             </div>
           </div>
 
@@ -173,7 +191,7 @@ export async function GET(request: NextRequest) {
                 display: "flex",
               }}
             >
-              {targetValue ? "Projected Value at $1B" : "My GIGA Holdings"}
+              {targetValue ? `Projected Value at ${mcapDisplay}` : "My GIGA Holdings"}
             </div>
 
             <div
@@ -226,7 +244,7 @@ export async function GET(request: NextRequest) {
                 display: "flex",
               }}
             >
-              {currentMultiplier ? `${currentMultiplier}x until $1B target` : ""}
+              {currentMultiplier ? `${currentMultiplier}x until ${mcapDisplay} target` : ""}
             </div>
           </div>
 

@@ -11,6 +11,7 @@ interface ShareButtonProps {
   address?: string;
   holdings?: string;
   targetValue?: string;
+  targetMarketCap?: number;
   entryMultiplier?: number;
   currentMultiplier?: number;
   className?: string;
@@ -23,6 +24,7 @@ export function ShareButton({
   address,
   holdings,
   targetValue,
+  targetMarketCap,
   entryMultiplier,
   currentMultiplier,
   className = "",
@@ -34,20 +36,36 @@ export function ShareButton({
     return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
   };
 
+  const formatMarketCap = (mcap: number | undefined): string => {
+    if (!mcap) return "$1B";
+    if (mcap >= 1_000_000_000_000) {
+      return `$${(mcap / 1_000_000_000_000).toFixed(mcap % 1_000_000_000_000 === 0 ? 0 : 1)}T`;
+    }
+    if (mcap >= 1_000_000_000) {
+      return `$${(mcap / 1_000_000_000).toFixed(mcap % 1_000_000_000 === 0 ? 0 : 1)}B`;
+    }
+    if (mcap >= 1_000_000) {
+      return `$${(mcap / 1_000_000).toFixed(mcap % 1_000_000 === 0 ? 0 : 0)}M`;
+    }
+    return `$${mcap.toLocaleString()}`;
+  };
+
   const generateTweetText = () => {
+    const mcapDisplay = formatMarketCap(targetMarketCap);
+
     if (type === "general") {
-      return `$GIGA is ${multiplier?.toFixed(1)}x away from $1B market cap 🚀\n\nProgress: ${progress?.toFixed(1)}%\n\nCalculate your potential gains:`;
+      return `$GIGA is ${multiplier?.toFixed(1)}x away from ${mcapDisplay} market cap 🚀\n\nProgress: ${progress?.toFixed(1)}%\n\nCalculate your potential gains:`;
     }
 
     if (type === "portfolio" && targetValue) {
-      return `My $GIGA bag will be worth $${targetValue} at $1B market cap 💰\n\n${entryMultiplier ? `That's ${entryMultiplier.toFixed(1)}x from my entry 📈` : ""}\n\nCheck your potential:`;
+      return `My $GIGA bag will be worth $${targetValue} at ${mcapDisplay} market cap 💰\n\n${entryMultiplier ? `That's ${entryMultiplier.toFixed(1)}x from my entry 📈` : ""}\n\nCheck your potential:`;
     }
 
     if (type === "portfolio" && holdings) {
       return `I'm holding ${holdings} $GIGA 💎\n\nCalculate your gains:`;
     }
 
-    return `Check out $GIGA - The path to $1B 🚀`;
+    return `Check out $GIGA - The path to ${mcapDisplay} 🚀`;
   };
 
   const generateShareUrl = () => {
@@ -63,6 +81,7 @@ export function ShareButton({
       if (address) params.set("address", truncateAddress(address));
       if (holdings) params.set("holdings", holdings);
       if (targetValue) params.set("targetValue", targetValue);
+      if (targetMarketCap) params.set("targetMarketCap", targetMarketCap.toString());
       if (entryMultiplier) params.set("multiplier", entryMultiplier.toFixed(1));
       if (currentMultiplier) params.set("currentMultiplier", currentMultiplier.toFixed(1));
     }
