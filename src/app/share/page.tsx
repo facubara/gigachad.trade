@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { ShareRedirect } from "./ShareRedirect";
 
 interface SharePageProps {
   searchParams: Promise<{
@@ -107,9 +107,10 @@ export async function generateMetadata({ searchParams }: SharePageProps): Promis
 
 export default async function SharePage({ searchParams }: SharePageProps) {
   const params = await searchParams;
-  // Redirect to appropriate page based on type
-  if (params.type === "portfolio" || params.type === "holdings") {
-    redirect("/calculator");
-  }
-  redirect("/");
+  const redirectTo = params.type === "portfolio" || params.type === "holdings"
+    ? "/calculator"
+    : "/";
+
+  // Render the page (so crawlers see the meta tags), then redirect via client JS
+  return <ShareRedirect to={redirectTo} />;
 }

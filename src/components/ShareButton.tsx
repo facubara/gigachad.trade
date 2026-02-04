@@ -63,15 +63,15 @@ export function ShareButton({
     const mcapDisplay = formatMarketCap(targetMarketCap);
 
     if (type === "general") {
-      return `$GIGA is ${multiplier?.toFixed(1)}x away from ${mcapDisplay} market cap 🚀\n\nProgress: ${progress?.toFixed(1)}%\n\nCalculate your potential gains:`;
+      return `$GIGA is ${multiplier?.toFixed(1)}x away from ${mcapDisplay} market cap\n\nProgress: ${progress?.toFixed(1)}%\n\nCalculate your potential gains: gigachad.trade`;
     }
 
     if (type === "portfolio" && targetValue) {
-      return `My $GIGA bag will be worth $${targetValue} at ${mcapDisplay} market cap 💰\n\n${entryMultiplier ? `That's ${entryMultiplier.toFixed(1)}x from my entry 📈` : ""}\n\nCheck your potential:`;
+      return `My $GIGA bag will be worth $${targetValue} at ${mcapDisplay} market cap\n\n${entryMultiplier ? `That's ${entryMultiplier.toFixed(1)}x from my entry` : ""}\n\nCheck your potential: gigachad.trade`;
     }
 
     if (type === "portfolio" && holdings) {
-      return `I'm holding ${holdings} $GIGA 💎\n\nCalculate your gains:`;
+      return `I'm holding ${holdings} $GIGA\n\nCalculate your gains: gigachad.trade`;
     }
 
     if (type === "holdings" && holdings) {
@@ -79,10 +79,10 @@ export function ShareButton({
         ? `${priceChange >= 0 ? "+" : ""}${priceChange.toFixed(1)}% from entry`
         : "";
       const valueText = currentValue ? ` ($${currentValue})` : "";
-      return `I'm holding ${holdings} $GIGA${valueText} 💎\n\n${changeText ? `${changeText} 📈\n` : ""}${buyCount ? `${buyCount} buy transactions` : ""}\n\nCheck yours:`;
+      return `I'm holding ${holdings} $GIGA${valueText}\n\n${changeText ? `${changeText}\n` : ""}${buyCount ? `${buyCount} buy transactions` : ""}\n\nCheck yours: gigachad.trade`;
     }
 
-    return `Check out $GIGA - The path to ${mcapDisplay} 🚀`;
+    return `Check out $GIGA - The path to ${mcapDisplay}\n\ngigachad.trade`;
   };
 
   const generateShareUrl = () => {
@@ -94,6 +94,7 @@ export function ShareButton({
     if (type === "general") {
       if (multiplier) params.set("multiplier", multiplier.toFixed(1));
       if (progress) params.set("progress", progress.toFixed(1));
+      if (targetMarketCap) params.set("targetMarketCap", targetMarketCap.toString());
     } else if (type === "portfolio") {
       if (address) params.set("address", truncateAddress(address));
       if (holdings) params.set("holdings", holdings);
@@ -119,7 +120,7 @@ export function ShareButton({
     const tweetText = generateTweetText();
     const shareUrl = generateShareUrl();
 
-    // Use separate url param so Twitter unfurls the link and shows the OG image card
+    // Share URL as separate param so Twitter unfurls the link and shows the OG image card
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterUrl, "_blank", "width=550,height=420");
 
