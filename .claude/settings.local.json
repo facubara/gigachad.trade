@@ -36,7 +36,11 @@
       "mcp__playwright__browser_resize",
       "mcp__playwright__browser_network_requests",
       "WebSearch",
-      "Bash(npx remotion render:*)"
+      "Bash(npx remotion render:*)",
+      "Bash(npx remotion:*)",
+      "Bash(npm run remotion:studio:*)",
+      "Bash(node_modules.binremotion studio remotion/index.ts)",
+      "Bash(./node_modules/.bin/remotion studio:*)"
     ]
   }
 }

@@ -28,6 +28,7 @@ import {
   TokenomicsExplainer,
   TwitterLaunchPromo,
   PremiumPromo,
+  ProductTrailer,
 } from "./compositions/launch";
 
 const FPS = 30;
@@ -239,6 +240,15 @@ export function RemotionRoot() {
         id="PremiumPromo"
         component={PremiumPromo}
         durationInFrames={30 * FPS}
+        fps={FPS}
+        {...LANDSCAPE}
+      />
+
+      {/* ProductTrailer - 16.5 seconds (16:9) - SILENT PRODUCT LAUNCH TRAILER */}
+      <Composition
+        id="ProductTrailer"
+        component={ProductTrailer}
+        durationInFrames={495}
         fps={FPS}
         {...LANDSCAPE}
       />
