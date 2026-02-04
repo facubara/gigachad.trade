@@ -3,6 +3,14 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+const jetBrainsMono = fetch(
+  "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPQ.ttf"
+).then((res) => res.arrayBuffer());
+
+const jetBrainsMonoBold = fetch(
+  "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8L6tjPQ.ttf"
+).then((res) => res.arrayBuffer());
+
 function formatMarketCapDisplay(mcapStr: string | null): string {
   if (!mcapStr) return "$1B";
   const mcap = parseFloat(mcapStr);
@@ -19,7 +27,25 @@ function formatMarketCapDisplay(mcapStr: string | null): string {
   return `$${mcap.toLocaleString()}`;
 }
 
+const fontOptions = async () => ({
+  fonts: [
+    {
+      name: "JetBrains Mono",
+      data: await jetBrainsMono,
+      style: "normal" as const,
+      weight: 400 as const,
+    },
+    {
+      name: "JetBrains Mono",
+      data: await jetBrainsMonoBold,
+      style: "normal" as const,
+      weight: 700 as const,
+    },
+  ],
+});
+
 export async function GET(request: NextRequest) {
+  const fonts = await fontOptions();
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type") || "general";
   const multiplier = searchParams.get("multiplier");
@@ -44,22 +70,9 @@ export async function GET(request: NextRequest) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#0a0a0a",
-            fontFamily: "system-ui, sans-serif",
+            fontFamily: "'JetBrains Mono', monospace",
           }}
         >
-          {/* Background gradient accent */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: "linear-gradient(90deg, #a855f7, #6366f1)",
-              display: "flex",
-            }}
-          />
-
           {/* Main content */}
           <div
             style={{
@@ -117,15 +130,16 @@ export async function GET(request: NextRequest) {
               color: "#666",
             }}
           >
-            <span style={{ color: "#a855f7", fontWeight: "bold", display: "flex" }}>$GIGA</span>
+            <span style={{ color: "#fff", fontWeight: "bold", display: "flex" }}>$GIGA</span>
             <span style={{ marginLeft: "24px", marginRight: "24px", display: "flex" }}>•</span>
-            <span style={{ display: "flex" }}>gigachad.trade</span>
+            <span style={{ color: "#fff", display: "flex" }}>gigachad.trade</span>
           </div>
         </div>
       ),
       {
         width: 1200,
         height: 630,
+        ...fonts,
       }
     );
   }
@@ -150,22 +164,9 @@ export async function GET(request: NextRequest) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#0a0a0a",
-            fontFamily: "system-ui, sans-serif",
+            fontFamily: "'JetBrains Mono', monospace",
           }}
         >
-          {/* Background gradient accent */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: "linear-gradient(90deg, #a855f7, #6366f1)",
-              display: "flex",
-            }}
-          />
-
           {/* Main content */}
           <div
             style={{
@@ -179,7 +180,7 @@ export async function GET(request: NextRequest) {
                 fontSize: "20px",
                 color: "#666",
                 letterSpacing: "0.1em",
-                fontFamily: "monospace",
+                fontFamily: "'JetBrains Mono', monospace",
                 display: "flex",
               }}
             >
@@ -270,15 +271,16 @@ export async function GET(request: NextRequest) {
               color: "#666",
             }}
           >
-            <span style={{ color: "#a855f7", fontWeight: "bold", display: "flex" }}>$GIGA</span>
+            <span style={{ color: "#fff", fontWeight: "bold", display: "flex" }}>$GIGA</span>
             <span style={{ marginLeft: "24px", marginRight: "24px", display: "flex" }}>•</span>
-            <span style={{ display: "flex" }}>gigachad.trade</span>
+            <span style={{ color: "#fff", display: "flex" }}>gigachad.trade</span>
           </div>
         </div>
       ),
       {
         width: 1200,
         height: 630,
+        ...fonts,
       }
     );
   }
@@ -298,22 +300,9 @@ export async function GET(request: NextRequest) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#0a0a0a",
-            fontFamily: "system-ui, sans-serif",
+            fontFamily: "'JetBrains Mono', monospace",
           }}
         >
-          {/* Background gradient accent */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: "linear-gradient(90deg, #a855f7, #6366f1)",
-              display: "flex",
-            }}
-          />
-
           {/* Main content */}
           <div
             style={{
@@ -327,7 +316,7 @@ export async function GET(request: NextRequest) {
                 fontSize: "20px",
                 color: "#666",
                 letterSpacing: "0.1em",
-                fontFamily: "monospace",
+                fontFamily: "'JetBrains Mono', monospace",
                 display: "flex",
               }}
             >
@@ -412,15 +401,16 @@ export async function GET(request: NextRequest) {
               color: "#666",
             }}
           >
-            <span style={{ color: "#a855f7", fontWeight: "bold", display: "flex" }}>$GIGA</span>
+            <span style={{ color: "#fff", fontWeight: "bold", display: "flex" }}>$GIGA</span>
             <span style={{ marginLeft: "24px", marginRight: "24px", display: "flex" }}>•</span>
-            <span style={{ display: "flex" }}>gigachad.trade</span>
+            <span style={{ color: "#fff", display: "flex" }}>gigachad.trade</span>
           </div>
         </div>
       ),
       {
         width: 1200,
         height: 630,
+        ...fonts,
       }
     );
   }
@@ -437,7 +427,7 @@ export async function GET(request: NextRequest) {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#0a0a0a",
-          fontFamily: "system-ui, sans-serif",
+          fontFamily: "'JetBrains Mono', monospace",
         }}
       >
         <div
@@ -453,7 +443,7 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             fontSize: "32px",
-            color: "#a855f7",
+            color: "#fff",
             marginTop: "16px",
             display: "flex",
           }}
