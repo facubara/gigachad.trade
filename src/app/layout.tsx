@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://gigachad.trade"),
   title: "GIGACHAD | The Path to $1B",
   description: "Track the GIGACHAD token journey to $1 billion market cap.",
   keywords: ["GIGACHAD", "Solana", "meme coin", "crypto"],

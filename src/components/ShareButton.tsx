@@ -118,10 +118,9 @@ export function ShareButton({
 
     const tweetText = generateTweetText();
     const shareUrl = generateShareUrl();
-    const fullText = `${tweetText}\n\n${shareUrl}`;
 
-    // Open Twitter intent
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullText)}`;
+    // Use separate url param so Twitter unfurls the link and shows the OG image card
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterUrl, "_blank", "width=550,height=420");
 
     setIsSharing(false);
