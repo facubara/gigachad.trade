@@ -40,7 +40,8 @@
       "Bash(npx remotion:*)",
       "Bash(npm run remotion:studio:*)",
       "Bash(node_modules.binremotion studio remotion/index.ts)",
-      "Bash(./node_modules/.bin/remotion studio:*)"
+      "Bash(./node_modules/.bin/remotion studio:*)",
+      "WebFetch(domain:fonts.googleapis.com)"
     ]
   }
 }
