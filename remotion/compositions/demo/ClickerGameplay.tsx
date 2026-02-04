@@ -78,7 +78,7 @@ export function ClickerGameplay() {
             fontSize: 100,
             fontWeight: 700,
             color: colors.white,
-            tabularNums: true,
+            fontVariantNumeric: 'tabular-nums',
           }}
         >
           <CountUp
