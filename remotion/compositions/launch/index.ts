@@ -11,3 +11,4 @@ export { TokenomicsExplainer } from "./TokenomicsExplainer";
 export { TwitterLaunchPromo } from "./TwitterLaunchPromo";
 export { PremiumPromo } from "./PremiumPromo";
 export { ProductTrailer } from "./ProductTrailer";
+export { LaunchTrailer } from "./LaunchTrailer";

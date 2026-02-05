@@ -29,6 +29,7 @@ import {
   TwitterLaunchPromo,
   PremiumPromo,
   ProductTrailer,
+  LaunchTrailer,
 } from "./compositions/launch";
 
 const FPS = 30;
@@ -249,6 +250,15 @@ export function RemotionRoot() {
         id="ProductTrailer"
         component={ProductTrailer}
         durationInFrames={495}
+        fps={FPS}
+        {...LANDSCAPE}
+      />
+
+      {/* LaunchTrailer - 25 seconds (16:9) - MINIMALIST TYPOGRAPHIC LAUNCH TRAILER */}
+      <Composition
+        id="LaunchTrailer"
+        component={LaunchTrailer}
+        durationInFrames={25 * FPS}
         fps={FPS}
         {...LANDSCAPE}
       />
