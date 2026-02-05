@@ -20,6 +20,7 @@
     "@remotion/renderer": "4.0.417",
     "@remotion/tailwind": "4.0.417",
     "@solana/web3.js": "^1.98.4",
+    "@vercel/analytics": "^1.6.1",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.0.0",
     "next": "^16.1.0",
