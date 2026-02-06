@@ -4,6 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { usePhantom } from "@/hooks/usePhantom";
 import { LoadingState } from "@/types/cache";
 
+// Solana address validation: base58, 32-44 chars
+const SOLANA_ADDRESS_REGEX = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+function isValidSolanaAddress(address: string): boolean {
+  return SOLANA_ADDRESS_REGEX.test(address);
+}
+
 interface WalletInputProps {
   onAnalyze: (address: string) => void;
   isLoading: boolean;
@@ -20,6 +27,7 @@ export function WalletInput({
   isCacheAvailable = false,
 }: WalletInputProps) {
   const [inputAddress, setInputAddress] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
   const { isAvailable, isConnected, publicKey, connect, disconnect, error } =
     usePhantom();
 
@@ -72,9 +80,20 @@ export function WalletInput({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputAddress.trim()) {
-      onAnalyze(inputAddress.trim());
+    const trimmed = inputAddress.trim();
+
+    if (!trimmed) {
+      setValidationError("Please enter a wallet address");
+      return;
     }
+
+    if (!isValidSolanaAddress(trimmed)) {
+      setValidationError("Invalid Solana address format");
+      return;
+    }
+
+    setValidationError(null);
+    onAnalyze(trimmed);
   };
 
   const handlePhantomConnect = async () => {
@@ -102,22 +121,32 @@ export function WalletInput({
       </h2>
 
       {/* Manual address input */}
-      <form onSubmit={handleSubmit} className="flex gap-px bg-[var(--border)]">
-        <input
-          type="text"
-          value={inputAddress}
-          onChange={(e) => setInputAddress(e.target.value)}
-          placeholder="Enter Solana wallet address..."
-          className="flex-1 px-4 py-4 bg-[var(--bg)] text-[var(--white)] placeholder:text-[var(--dim)] focus:outline-none font-mono text-[12px] tracking-[0.02em]"
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !inputAddress.trim()}
-          className="px-8 py-4 bg-[var(--white)] text-[var(--black)] font-medium text-[11px] tracking-[0.15em] uppercase hover:bg-[var(--muted)] hover:text-[var(--white)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          {getButtonText()}
-        </button>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <div className="flex gap-px bg-[var(--border)]">
+          <input
+            type="text"
+            value={inputAddress}
+            onChange={(e) => {
+              setInputAddress(e.target.value);
+              setValidationError(null); // Clear error on input change
+            }}
+            placeholder="Enter Solana wallet address..."
+            className="flex-1 px-4 py-4 bg-[var(--bg)] text-[var(--white)] placeholder:text-[var(--dim)] focus:outline-none font-mono text-[12px] tracking-[0.02em]"
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !inputAddress.trim()}
+            className="px-8 py-4 bg-[var(--white)] text-[var(--black)] font-medium text-[11px] tracking-[0.15em] uppercase hover:bg-[var(--muted)] hover:text-[var(--white)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {getButtonText()}
+          </button>
+        </div>
+        {validationError && (
+          <p className="text-[var(--negative)] text-[11px] tracking-[0.05em]">
+            {validationError}
+          </p>
+        )}
       </form>
 
       {/* Divider */}

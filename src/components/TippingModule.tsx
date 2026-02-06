@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePhantom } from "@/hooks/usePhantom";
-import { sendTip } from "@/lib/solana";
+import { sendTip, TipError } from "@/lib/solana";
 import { TIP_AMOUNTS } from "@/lib/constants";
 
 type TipStatus = "idle" | "pending" | "success" | "error";
@@ -34,6 +34,12 @@ export function TippingModule() {
         setLastSignature(null);
       }, 3000);
     } catch (err) {
+      // Don't show error for user rejection - just reset
+      if (err instanceof TipError && err.code === "USER_REJECTED") {
+        setTipStatus("idle");
+        return;
+      }
+
       setTipError(err instanceof Error ? err.message : "Transaction failed");
       setTipStatus("error");
 

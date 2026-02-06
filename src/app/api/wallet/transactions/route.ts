@@ -5,7 +5,37 @@ import { memoryCache } from "@/lib/cache";
 // Cache wallet analysis for 5 minutes (transaction history doesn't change often)
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
+// Rate limiting: track requests per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 20; // 20 requests per minute (analysis is expensive)
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX_REQUESTS;
+}
+
+// Solana transaction signature format: base58, 87-88 chars
+const SIGNATURE_REGEX = /^[1-9A-HJ-NP-Za-km-z]{87,88}$/;
+
 export async function GET(request: NextRequest) {
+  // Rate limiting
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const address = request.nextUrl.searchParams.get("address");
   const cachedNewestSignature = request.nextUrl.searchParams.get("cachedNewestSignature");
 
@@ -20,6 +50,14 @@ export async function GET(request: NextRequest) {
   if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
     return NextResponse.json(
       { error: "Invalid Solana address" },
+      { status: 400 }
+    );
+  }
+
+  // Validate cachedNewestSignature if provided (prevent injection)
+  if (cachedNewestSignature && !SIGNATURE_REGEX.test(cachedNewestSignature)) {
+    return NextResponse.json(
+      { error: "Invalid signature format" },
       { status: 400 }
     );
   }

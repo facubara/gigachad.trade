@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useIndexedDB } from "./useIndexedDB";
 import {
   LoadingState,
@@ -26,6 +26,8 @@ export interface WalletAnalysis {
   analyzedAt: number;
   stale?: boolean;
 }
+
+const LAST_WALLET_KEY = "giga-last-wallet";
 
 // Extended analysis from API includes caching metadata
 interface ExtendedWalletAnalysis extends WalletAnalysis {
@@ -75,6 +77,77 @@ export function useWalletAnalysis(): UseWalletAnalysisResult {
 
   // Track current analysis to prevent race conditions
   const currentAnalysisRef = useRef<string | null>(null);
+  const hasRestoredRef = useRef(false);
+
+  // Restore cached analysis on mount
+  useEffect(() => {
+    if (!isCacheAvailable || !isCacheReady || hasRestoredRef.current) return;
+
+    const restoreFromCache = async () => {
+      const lastWallet = localStorage.getItem(LAST_WALLET_KEY);
+      if (!lastWallet) return;
+
+      try {
+        const metadata = await getMetadata(lastWallet);
+        if (!metadata) return;
+
+        const cachedTransactions = await getTransactions(lastWallet);
+        if (cachedTransactions.length === 0) return;
+
+        // Rebuild analysis from cached transactions
+        let totalBought = 0;
+        let totalSold = 0;
+        let weightedSum = 0;
+
+        const transactions = cachedTransactions.map((tx) => {
+          if (tx.type === "buy") {
+            totalBought += tx.gigachadAmount;
+            weightedSum += tx.gigachadAmount * tx.pricePerToken;
+          } else if (tx.type === "sell") {
+            totalSold += tx.gigachadAmount;
+          }
+          return {
+            signature: tx.signature,
+            timestamp: tx.timestamp,
+            type: tx.type,
+            gigachadAmount: tx.gigachadAmount,
+            quoteAmount: tx.quoteAmount,
+            quoteMint: tx.quoteMint,
+            pricePerToken: tx.pricePerToken,
+          };
+        });
+
+        const restoredAnalysis: WalletAnalysis = {
+          address: lastWallet,
+          totalBought,
+          totalSold,
+          netHoldings: totalBought - totalSold,
+          weightedAverageEntryPrice: totalBought > 0 ? weightedSum / totalBought : 0,
+          transactions,
+          analyzedAt: metadata.lastFetchedAt,
+          stale: true, // Mark as stale so user knows it's cached
+        };
+
+        // Fetch current balance
+        const holdingsRes = await fetch(
+          `/api/wallet/holdings?address=${encodeURIComponent(lastWallet)}`
+        );
+        if (holdingsRes.ok) {
+          const holdingsData = await holdingsRes.json();
+          setBalance(holdingsData.balance);
+        }
+
+        setAnalysis(restoredAnalysis);
+        currentAnalysisRef.current = lastWallet;
+        console.log(`[Cache] Restored ${transactions.length} transactions from cache`);
+      } catch (err) {
+        console.error("[Cache] Error restoring from cache:", err);
+      }
+    };
+
+    hasRestoredRef.current = true;
+    restoreFromCache();
+  }, [isCacheAvailable, isCacheReady, getMetadata, getTransactions]);
 
   const analyze = useCallback(
     async (address: string) => {
@@ -257,6 +330,8 @@ export function useWalletAnalysis(): UseWalletAnalysisResult {
 
         setBalance(holdingsData.balance);
         setAnalysis(finalAnalysis);
+        // Persist wallet address for session restoration
+        localStorage.setItem(LAST_WALLET_KEY, address);
         setLoadingState({
           status: "complete",
           message: "Analysis complete",
@@ -298,6 +373,7 @@ export function useWalletAnalysis(): UseWalletAnalysisResult {
     setBalance(null);
     setError(null);
     setLoadingState(IDLE_STATE);
+    localStorage.removeItem(LAST_WALLET_KEY);
   }, []);
 
   return {
