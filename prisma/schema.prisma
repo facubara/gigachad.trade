@@ -43,3 +43,29 @@ model LeaderboardMeta {
   lastRefreshed DateTime
   totalPlayers  Int
 }
+
+// Anonymous wallet stats for entry price analytics
+model WalletStats {
+  id                    String   @id @default(uuid())
+  walletHash            String   @unique  // SHA256 hash for privacy
+  totalBuyCount         Int      @default(0)
+  totalSellCount        Int      @default(0)
+  weightedAvgEntryPrice Float    @default(0)
+  uniqueBuyDays         Int      @default(0)
+  currentHoldings       Float    @default(0)
+  analyzedAt            DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([weightedAvgEntryPrice])
+}
+
+// Global aggregated stats for percentile comparisons
+model GlobalStats {
+  id                   String   @id @default("current")
+  totalWalletsAnalyzed Int      @default(0)
+  entryPriceP25        Float?
+  entryPriceP50        Float?   // Median
+  entryPriceP75        Float?
+  avgEntryPrice        Float?
+  lastUpdated          DateTime @default(now())
+}

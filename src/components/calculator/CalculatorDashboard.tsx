@@ -1,13 +1,18 @@
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import { useWalletAnalysis } from "@/hooks/useWalletAnalysis";
 import { useCalculator } from "@/hooks/useCalculator";
 import { useTokenPrice } from "@/hooks/useTokenPrice";
+import { useAchievements } from "@/hooks/useAchievements";
+import { useWalletStats } from "@/hooks/useWalletStats";
 import { WalletInput } from "./WalletInput";
 import { TargetInput } from "./TargetInput";
 import { HoldingsDisplay } from "./HoldingsDisplay";
 import { ProjectionDisplay } from "./ProjectionDisplay";
+import { AchievementsDisplay } from "./AchievementsDisplay";
+import { EntryPriceAnalytics } from "./EntryPriceAnalytics";
+import { ConsentModal } from "./ConsentModal";
 
 const TRANSACTIONS_PER_PAGE = 20;
 
@@ -29,6 +34,18 @@ export function CalculatorDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState<SortColumn>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [showConsentModal, setShowConsentModal] = useState(false);
+
+  // Achievement and stats hooks
+  const { achievements, metrics } = useAchievements(analysis?.transactions);
+  const {
+    hasConsent,
+    setConsent,
+    submitStats,
+    globalStats,
+    fetchGlobalStats,
+    isFetchingGlobal,
+  } = useWalletStats();
 
   // Console log analysis data when it changes
   useEffect(() => {
@@ -44,6 +61,46 @@ export function CalculatorDashboard() {
       console.log("[Frontend] All processed transactions:", analysis.transactions);
     }
   }, [analysis]);
+
+  // Fetch global stats when analysis is available
+  useEffect(() => {
+    if (analysis && analysis.weightedAverageEntryPrice > 0) {
+      fetchGlobalStats(analysis.address, analysis.weightedAverageEntryPrice);
+    }
+  }, [analysis, fetchGlobalStats]);
+
+  // Submit stats when consent is given and analysis is available
+  useEffect(() => {
+    if (hasConsent && analysis && balance !== null && analysis.weightedAverageEntryPrice > 0) {
+      submitStats({
+        address: analysis.address,
+        totalBuyCount: metrics.buyCount,
+        totalSellCount: metrics.sellCount,
+        weightedAvgEntryPrice: analysis.weightedAverageEntryPrice,
+        uniqueBuyDays: metrics.uniqueBuyDays,
+        currentHoldings: balance,
+      }).then((success) => {
+        if (success) {
+          // Refetch global stats to include this wallet
+          fetchGlobalStats(analysis.address, analysis.weightedAverageEntryPrice);
+        }
+      });
+    }
+  }, [hasConsent, analysis, balance, metrics, submitStats, fetchGlobalStats]);
+
+  // Consent modal handlers
+  const handleOpenConsent = useCallback(() => {
+    setShowConsentModal(true);
+  }, []);
+
+  const handleAcceptConsent = useCallback(() => {
+    setConsent(true);
+    setShowConsentModal(false);
+  }, [setConsent]);
+
+  const handleDeclineConsent = useCallback(() => {
+    setShowConsentModal(false);
+  }, []);
 
   // Reset page and sort when analysis changes
   useEffect(() => {
@@ -203,6 +260,29 @@ export function CalculatorDashboard() {
             />
           </section>
 
+          {/* Achievements Section */}
+          {analysis && analysis.transactions.length > 0 && (
+            <section className="p-8 md:p-10 bg-[var(--steel)]">
+              <AchievementsDisplay
+                achievements={achievements}
+                isLoading={isLoading}
+              />
+            </section>
+          )}
+
+          {/* Entry Price Analytics Section */}
+          {analysis && (
+            <section className="p-8 md:p-10 bg-[var(--steel)]">
+              <EntryPriceAnalytics
+                userEntryPrice={analysis.weightedAverageEntryPrice}
+                globalStats={globalStats}
+                isLoading={isFetchingGlobal}
+                onRequestConsent={handleOpenConsent}
+                hasConsent={hasConsent}
+              />
+            </section>
+          )}
+
           {/* Target Input Section */}
           <section className="p-8 md:p-10 bg-[var(--steel)]">
             <TargetInput
@@ -226,6 +306,13 @@ export function CalculatorDashboard() {
           </section>
         </>
       )}
+
+      {/* Consent Modal */}
+      <ConsentModal
+        isOpen={showConsentModal}
+        onAccept={handleAcceptConsent}
+        onDecline={handleDeclineConsent}
+      />
 
       {/* Transaction History (if available) */}
       {analysis && analysis.transactions.length > 0 && (
